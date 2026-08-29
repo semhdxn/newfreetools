@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ToolShell, StepNav, ResultsCard } from '@/components/ToolShell';
 import { Button, Card, LikertRow, ScoreBar } from '@/components/ui';
+import { Download, ExternalLink } from 'lucide-react';
 import {
   FREQUENCY_OPTIONS,
   RELEVANCE_THRESHOLD,
@@ -11,11 +12,18 @@ import {
 } from '@/data/homeBehaviourData';
 import { buildToolCsv, downloadToolCsv, type Row } from '@/lib/csv';
 import { useToolSession } from '@/lib/useToolSession';
+import { adsEnabledFor, INTERSTITIAL_EVERY_N_PAGES, ADSENSE_SLOTS } from '@/lib/adConfig';
+import { AdBanner } from '@/components/AdBanner';
+import { InterstitialGate } from '@/components/InterstitialGate';
+import { AffiliateDisclosureBanner, MultiAreaProductGrid } from '@/components/AffiliateProducts';
+import { PremiumLockButton } from '@/components/PremiumLockButton';
 
 interface HomeBehaviourState {
   responses: Record<string, number>;
   step: number;
   finished: boolean;
+  /** A state patch waiting to be applied once the interstitial ad's countdown clears. */
+  interstitialPending: Partial<HomeBehaviourState> | null;
 }
 
 const labelFor = (value: number) => FREQUENCY_OPTIONS.find((o) => o.value === value)?.label ?? '';
@@ -25,6 +33,7 @@ export default function HomeBehaviourTool() {
     responses: {},
     step: 0,
     finished: false,
+    interstitialPending: null,
   });
 
   const scores = useMemo(() => calculateHomeBehaviourScores(state.responses), [state.responses]);
@@ -70,10 +79,12 @@ export default function HomeBehaviourTool() {
         childId={childId}
         onRestart={restart}
       >
+        <AffiliateDisclosureBanner toolId="home-behaviour" />
+
         <ResultsCard title="Average score per category (1–5)">
           <div className="space-y-3">
             {homeBehaviourCategories.map((c) => (
-              <ScoreBar key={c.id} label={c.label} value={scores[c.id]} max={5} suffix="" />
+              <ScoreBar key={c.id} label={c.label} value={scores[c.id]} max={5} suffix="" banded />
             ))}
           </div>
         </ResultsCard>
@@ -84,7 +95,8 @@ export default function HomeBehaviourTool() {
             {c.webLinks.length > 0 && (
               <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
                 {c.webLinks.map((l) => (
-                  <li key={l.url}>
+                  <li key={l.url} className="flex items-start gap-1.5">
+                    <ExternalLink className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
                     <a className="text-primary underline" href={l.url} target="_blank" rel="noreferrer noopener">
                       {l.label}
                     </a>
@@ -92,26 +104,58 @@ export default function HomeBehaviourTool() {
                 ))}
               </ul>
             )}
+            <MultiAreaProductGrid toolId="home-behaviour" areaIds={c.productIds} />
           </ResultsCard>
         ))}
+
+        <AdBanner toolId="home-behaviour" slot={ADSENSE_SLOTS.resultsBanner} />
 
         <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">Download all responses, scores and advice as a spreadsheet.</p>
           <Button variant="accent" size="lg" onClick={handleDownload}>
+            <Download className="h-4 w-4 mr-2" />
             Download CSV
           </Button>
         </Card>
 
-        <Button variant="outline" onClick={() => setState((p) => ({ ...p, finished: false }))}>
-          Back to the questionnaire
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <PremiumLockButton label="Download / save young person for future" className="min-w-[160px] flex-1" />
+          <Button variant="outline" className="min-w-[160px] flex-1" onClick={() => setState((p) => ({ ...p, finished: false }))}>
+            Back to the questionnaire
+          </Button>
+        </div>
+
+        <AdBanner toolId="home-behaviour" slot={ADSENSE_SLOTS.resultsBanner} />
       </ToolShell>
+    );
+  }
+
+  if (state.interstitialPending) {
+    return (
+      <InterstitialGate
+        toolId="home-behaviour"
+        onContinue={() =>
+          setState((prev) => ({ ...prev, ...(prev.interstitialPending ?? {}), interstitialPending: null }))
+        }
+      />
     );
   }
 
   const category = homeBehaviourCategories[Math.min(state.step, homeBehaviourCategories.length - 1)];
   const questions = getHomeBehaviourQuestionsByCategory(category.id);
   const isLast = state.step >= homeBehaviourCategories.length - 1;
+
+  const goNext = () => {
+    const patch: Partial<HomeBehaviourState> = isLast ? { finished: true } : { step: state.step + 1 };
+    const pageNumber = state.step + 1;
+    if (isLast) setCompleted(true);
+    if (adsEnabledFor('home-behaviour') && pageNumber % INTERSTITIAL_EVERY_N_PAGES === 0) {
+      setState((p) => ({ ...p, interstitialPending: patch }));
+    } else {
+      setState((p) => ({ ...p, ...patch }));
+    }
+    window.scrollTo(0, 0);
+  };
 
   return (
     <ToolShell
@@ -126,11 +170,7 @@ export default function HomeBehaviourTool() {
         <StepNav
           hideBack={state.step === 0}
           onBack={() => setState((p) => ({ ...p, step: Math.max(0, p.step - 1) }))}
-          onNext={() =>
-            isLast
-              ? (setState((p) => ({ ...p, finished: true })), setCompleted(true), window.scrollTo(0, 0))
-              : (setState((p) => ({ ...p, step: p.step + 1 })), window.scrollTo(0, 0))
-          }
+          onNext={goNext}
           nextLabel={isLast ? 'See results' : 'Next'}
         />
       }
@@ -149,6 +189,8 @@ export default function HomeBehaviourTool() {
           />
         ))}
       </Card>
+
+      <AdBanner toolId="home-behaviour" slot={ADSENSE_SLOTS.inputBanner} />
     </ToolShell>
   );
 }

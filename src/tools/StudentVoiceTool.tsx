@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { ToolShell, StepNav, ResultsCard } from '@/components/ToolShell';
 import { Button, Card, CheckItem, LikertRow, ScoreBar } from '@/components/ui';
+import { Download } from 'lucide-react';
+import { PremiumLockButton } from '@/components/PremiumLockButton';
 import {
   FREQUENCY_OPTIONS,
   calculateScores,
@@ -86,10 +88,10 @@ export default function StudentVoiceTool() {
         <ResultsCard title="Overview">
           <div className="space-y-3">
             {studentVoiceCategories.map((c) => (
-              <ScoreBar key={c.id} label={c.label} value={scores[c.id]} />
+              <ScoreBar key={c.id} label={c.label} value={scores[c.id]} banded />
             ))}
-            <ScoreBar label="Emotional wellbeing" value={scores.emotional} />
-            <ScoreBar label="Self esteem" value={scores.selfEsteem} />
+            <ScoreBar label="Emotional wellbeing" value={scores.emotional} banded />
+            <ScoreBar label="Self esteem" value={scores.selfEsteem} banded />
           </div>
         </ResultsCard>
 
@@ -136,13 +138,17 @@ export default function StudentVoiceTool() {
         <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">Download every answer and score as a spreadsheet.</p>
           <Button variant="accent" size="lg" onClick={handleDownload}>
+            <Download className="h-4 w-4 mr-2" />
             Download CSV
           </Button>
         </Card>
 
-        <Button variant="outline" onClick={() => setState((p) => ({ ...p, finished: false }))}>
-          Back to the questions
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <PremiumLockButton label="Download / save young person for future" className="min-w-[160px] flex-1" />
+          <Button variant="outline" className="min-w-[160px] flex-1" onClick={() => setState((p) => ({ ...p, finished: false }))}>
+            Back to the questions
+          </Button>
+        </div>
       </ToolShell>
     );
   }

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, Progress } from './ui';
+import { Footer } from './Footer';
 
 /**
  * Shared chrome for every tool: pseudonym badge, step progress, save note and
@@ -67,6 +68,8 @@ export function ToolShell({
           Start again
         </Button>
       </div>
+
+      <Footer />
     </div>
   );
 }

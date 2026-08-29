@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Play, RotateCcw } from 'lucide-react';
 import { Button, Card } from '@/components/ui';
-import { TOOL_LABELS, clearAllSessions, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
+import { Footer } from '@/components/Footer';
+import { TOOL_LABELS, clearAllSessions, clearSession, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
 
 const TOOLS: { id: ToolId; path: string; blurb: string }[] = [
   { id: 'sensory', path: '/sensory', blurb: 'Tick the statements that sound like the child and see which sensory areas stand out.' },
@@ -47,11 +49,35 @@ export default function Home() {
                   {s.completed ? ' (completed)' : ' (in progress)'}
                 </p>
               )}
-              <Link to={tool.path} className="mt-4">
-                <Button className="w-full" variant="accent" size="lg">
-                  {s ? 'Resume' : 'Start'}
-                </Button>
-              </Link>
+              <div className="mt-4 flex gap-2">
+                <Link to={tool.path} className="flex-1">
+                  <Button className="w-full" variant="accent" size={s ? 'md' : 'lg'}>
+                    <Play className="h-4 w-4 mr-1.5" />
+                    {s ? 'Resume' : 'Start'}
+                  </Button>
+                </Link>
+                {s && (
+                  <Link
+                    to={tool.path}
+                    className="flex-1"
+                    onClick={(e) => {
+                      if (
+                        !window.confirm(`Clear the saved ${TOOL_LABELS[tool.id]} answers on this device and start a new one?`)
+                      ) {
+                        e.preventDefault();
+                        return;
+                      }
+                      clearSession(tool.id);
+                      setSessions((prev) => prev.filter((sess) => sess.toolId !== tool.id));
+                    }}
+                  >
+                    <Button className="w-full" variant="outline" size="md">
+                      <RotateCcw className="h-4 w-4 mr-1.5" />
+                      Clear &amp; start new
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </Card>
           );
         })}
@@ -77,6 +103,8 @@ export default function Home() {
         These tools are for reflection and planning. They are not a diagnostic assessment and do not replace advice from a
         qualified professional. See <Link className="underline" to="/">the full SEMH Toolkit</Link> for saved records and reports.
       </p>
+
+      <Footer />
     </div>
   );
 }

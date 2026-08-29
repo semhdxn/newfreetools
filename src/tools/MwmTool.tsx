@@ -1,15 +1,22 @@
 import { useMemo } from 'react';
 import { ToolShell, StepNav, ResultsCard } from '@/components/ToolShell';
 import { Button, Card, CheckItem, LikertRow, ScoreBar } from '@/components/ui';
+import { Download, Target } from 'lucide-react';
 import { measureWhatMattersCriteria } from '@/data/measureWhatMattersData';
 import { buildToolCsv, downloadToolCsv, type Row } from '@/lib/csv';
 import { useToolSession } from '@/lib/useToolSession';
+import { adsEnabledFor, INTERSTITIAL_EVERY_N_PAGES, ADSENSE_SLOTS } from '@/lib/adConfig';
+import { AdBanner } from '@/components/AdBanner';
+import { InterstitialGate } from '@/components/InterstitialGate';
+import { PremiumLockButton } from '@/components/PremiumLockButton';
 
 interface MwmState {
   criteriaIds: string[];
   responses: Record<string, number>;
   step: number; // 0 = pick criteria, then one step per chosen criterion
   finished: boolean;
+  /** A state patch waiting to be applied once the interstitial ad's countdown clears. */
+  interstitialPending: Partial<MwmState> | null;
 }
 
 const SCALE = [
@@ -28,6 +35,7 @@ export default function MwmTool() {
     responses: {},
     step: 0,
     finished: false,
+    interstitialPending: null,
   });
 
   const chosen = useMemo(
@@ -80,17 +88,36 @@ export default function MwmTool() {
           </div>
         </ResultsCard>
 
+        <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.resultsBanner} />
+
         <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">Download every statement score as a spreadsheet.</p>
           <Button variant="accent" size="lg" onClick={handleDownload}>
+            <Download className="h-4 w-4 mr-2" />
             Download CSV
           </Button>
         </Card>
 
-        <Button variant="outline" onClick={() => setState((p) => ({ ...p, finished: false }))}>
-          Back to the questionnaire
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <PremiumLockButton label="Download / save young person for future" className="min-w-[160px] flex-1" />
+          <Button variant="outline" className="min-w-[160px] flex-1" onClick={() => setState((p) => ({ ...p, finished: false }))}>
+            Back to the questionnaire
+          </Button>
+        </div>
+
+        <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.resultsBanner} />
       </ToolShell>
+    );
+  }
+
+  if (state.interstitialPending) {
+    return (
+      <InterstitialGate
+        toolId="mwm"
+        onContinue={() =>
+          setState((prev) => ({ ...prev, ...(prev.interstitialPending ?? {}), interstitialPending: null }))
+        }
+      />
     );
   }
 
@@ -119,7 +146,8 @@ export default function MwmTool() {
         }
       >
         <Card>
-          <p className="mb-3 text-sm text-muted-foreground">
+          <p className="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Target className="h-4 w-4 flex-shrink-0" />
             {state.criteriaIds.length} of {MAX_CRITERIA} selected
           </p>
           {measureWhatMattersCriteria.map((c) => (
@@ -139,6 +167,17 @@ export default function MwmTool() {
   const criteria = chosen[index];
   const isLast = index >= chosen.length - 1;
 
+  const goNext = () => {
+    const patch: Partial<MwmState> = isLast ? { finished: true } : { step: state.step + 1 };
+    if (isLast) setCompleted(true);
+    if (adsEnabledFor('mwm') && (index + 1) % INTERSTITIAL_EVERY_N_PAGES === 0) {
+      setState((p) => ({ ...p, interstitialPending: patch }));
+    } else {
+      setState((p) => ({ ...p, ...patch }));
+    }
+    window.scrollTo(0, 0);
+  };
+
   return (
     <ToolShell
       title="Measure What Matters"
@@ -151,11 +190,7 @@ export default function MwmTool() {
       footer={
         <StepNav
           onBack={() => (setState((p) => ({ ...p, step: Math.max(0, p.step - 1) })), window.scrollTo(0, 0))}
-          onNext={() =>
-            isLast
-              ? (setState((p) => ({ ...p, finished: true })), setCompleted(true), window.scrollTo(0, 0))
-              : (setState((p) => ({ ...p, step: p.step + 1 })), window.scrollTo(0, 0))
-          }
+          onNext={goNext}
           nextLabel={isLast ? 'See results' : 'Next'}
         />
       }
@@ -174,6 +209,8 @@ export default function MwmTool() {
           />
         ))}
       </Card>
+
+      <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.inputBanner} />
     </ToolShell>
   );
 }

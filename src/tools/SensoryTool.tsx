@@ -6,6 +6,11 @@ import { getStatementsForArea, getStrategiesForArea, sensoryAreas, statements } 
 import type { ResponseType, SensoryArea, Statement, Strategy } from '@/data/types';
 import { buildToolCsv, downloadToolCsv, type Row } from '@/lib/csv';
 import { useToolSession } from '@/lib/useToolSession';
+import { adsEnabledFor, INTERSTITIAL_EVERY_N_PAGES, ADSENSE_SLOTS } from '@/lib/adConfig';
+import { AdBanner } from '@/components/AdBanner';
+import { InterstitialGate } from '@/components/InterstitialGate';
+import { AffiliateDisclosureBanner, AreaProductGrid } from '@/components/AffiliateProducts';
+import { PremiumLockButton } from '@/components/PremiumLockButton';
 import { RefreshCw, CheckCircle, Download, AlertTriangle, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 
 interface SensoryState {
@@ -24,6 +29,8 @@ interface SensoryState {
   disclaimerAgreed: boolean;
   permissionConfirmed: boolean;
   circuit: CircuitState | null;
+  /** A state patch waiting to be applied once the interstitial ad's countdown clears. */
+  interstitialPending: Partial<SensoryState> | null;
 }
 
 interface AreaResult {
@@ -255,6 +262,7 @@ export default function SensoryTool() {
     disclaimerAgreed: false,
     permissionConfirmed: false,
     circuit: null,
+    interstitialPending: null,
   });
 
   const [activeCircuitDay, setActiveCircuitDay] = useState<CircuitDay>('mon');
@@ -324,18 +332,19 @@ export default function SensoryTool() {
   };
 
   const nextPage = () => {
+    let patch: Partial<SensoryState> | null = null;
     if (state.step === 'phase1') {
-      if (state.phase1Page < phase1Pages.length - 1) {
-        setState((prev) => ({ ...prev, phase1Page: prev.phase1Page + 1 }));
-      } else {
-        setState((prev) => ({ ...prev, step: 'midpoint' }));
-      }
+      patch = state.phase1Page < phase1Pages.length - 1 ? { phase1Page: state.phase1Page + 1 } : { step: 'midpoint' };
     } else if (state.step === 'phase2') {
-      if (state.phase2Page < phase2Pages.length - 1) {
-        setState((prev) => ({ ...prev, phase2Page: prev.phase2Page + 1 }));
-      } else {
-        setState((prev) => ({ ...prev, step: 'results' }));
-      }
+      patch = state.phase2Page < phase2Pages.length - 1 ? { phase2Page: state.phase2Page + 1 } : { step: 'results' };
+    }
+    if (!patch) return;
+
+    // Every few pages, gate the advance behind an interstitial ad instead of applying it immediately.
+    if (adsEnabledFor('sensory') && currentPageNumber % INTERSTITIAL_EVERY_N_PAGES === 0) {
+      setState((prev) => ({ ...prev, interstitialPending: patch }));
+    } else {
+      setState((prev) => ({ ...prev, ...patch }));
     }
   };
 
@@ -569,6 +578,19 @@ export default function SensoryTool() {
     );
   }
 
+  // Interstitial ad — blocks continuing until its countdown clears, then
+  // applies whatever page advance was waiting behind it.
+  if (state.interstitialPending) {
+    return (
+      <InterstitialGate
+        toolId="sensory"
+        onContinue={() =>
+          setState((prev) => ({ ...prev, ...(prev.interstitialPending ?? {}), interstitialPending: null }))
+        }
+      />
+    );
+  }
+
   // Questionnaire phase (1 or 2) — deliberately lean chrome so a 3x3 page of
   // statements fits above the fold with no scrolling.
   if (state.step === 'phase1' || state.step === 'phase2') {
@@ -618,6 +640,8 @@ export default function SensoryTool() {
             );
           })}
         </div>
+
+        <AdBanner toolId="sensory" slot={ADSENSE_SLOTS.inputBanner} className="mt-5" />
       </div>
     );
   }
@@ -671,6 +695,8 @@ export default function SensoryTool() {
     return (
       <ToolShell title="Sensory Suggester" childId={childId} onRestart={restart}>
         <div className="max-w-4xl mx-auto space-y-6">
+          <AffiliateDisclosureBanner toolId="sensory" />
+
           {/* Results table */}
           <Card className="bg-card">
             <div className="p-6 space-y-4">
@@ -804,10 +830,14 @@ export default function SensoryTool() {
                           </div>
                         </div>
                       )}
+
+                      <AreaProductGrid toolId="sensory" areaId={r.area.id} />
                     </div>
                   </Card>
                 );
               })}
+
+              <AdBanner toolId="sensory" slot={ADSENSE_SLOTS.resultsBanner} />
             </div>
           )}
 
@@ -820,10 +850,13 @@ export default function SensoryTool() {
             <Button variant="outline" onClick={openCircuit} className="min-w-[160px] flex-1">
               Build a Sensory Circuit
             </Button>
+            <PremiumLockButton label="Download / save young person for future" className="min-w-[160px] flex-1" />
             <Button variant="outline" onClick={restart} className="min-w-[160px] flex-1">
               Start Over
             </Button>
           </div>
+
+          <AdBanner toolId="sensory" slot={ADSENSE_SLOTS.resultsBanner} className="mt-2" />
         </div>
       </ToolShell>
     );
@@ -1106,6 +1139,8 @@ export default function SensoryTool() {
               </div>
             </Card>
           )}
+
+          <AdBanner toolId="sensory" slot={ADSENSE_SLOTS.resultsBanner} />
         </div>
       </ToolShell>
     );

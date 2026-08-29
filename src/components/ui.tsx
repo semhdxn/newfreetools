@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 
 export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(' ');
@@ -22,9 +22,13 @@ export function Button({ variant = 'primary', size = 'md', className, ...props }
   return <button className={cn(base, sizes[size], variants[variant], className)} {...props} />;
 }
 
-export function Card({ children, className }: { children: ReactNode; className?: string }) {
+type CardProps = HTMLAttributes<HTMLDivElement> & { children: ReactNode; className?: string };
+
+export function Card({ children, className, ...props }: CardProps) {
   return (
-    <div className={cn('rounded-2xl border border-border bg-card p-5 shadow-sm', className)}>{children}</div>
+    <div className={cn('rounded-2xl border border-border bg-card p-5 shadow-sm', className)} {...props}>
+      {children}
+    </div>
   );
 }
 
@@ -114,7 +118,31 @@ export function CheckItem({
   );
 }
 
-export function ScoreBar({ label, value, max = 100, suffix = '%' }: { label: string; value: number; max?: number; suffix?: string }) {
+/** Same green/amber/red bands used across the results pages: low ≤25%, moderate 26-75%, high >75% of `max`. */
+function bandedTone(value: number, max: number): string {
+  const pct = max === 0 ? 0 : (value / max) * 100;
+  if (pct <= 25) return 'bg-success';
+  if (pct <= 75) return 'bg-amber-500';
+  return 'bg-destructive';
+}
+
+export function ScoreBar({
+  label,
+  value,
+  max = 100,
+  suffix = '%',
+  banded = false,
+}: {
+  label: string;
+  value: number;
+  max?: number;
+  suffix?: string;
+  /** When true, the bar colour follows the same low/moderate/high bands as
+   * the results pages instead of a flat brand colour. Only meaningful when a
+   * higher value means more support is needed — leave off (default) when a
+   * higher score is simply "better", e.g. Measure What Matters. */
+  banded?: boolean;
+}) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
   return (
     <div className="space-y-1">
@@ -126,7 +154,10 @@ export function ScoreBar({ label, value, max = 100, suffix = '%' }: { label: str
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+        <div
+          className={`h-full rounded-full transition-all ${banded ? bandedTone(value, max) : 'bg-primary'}`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
   );

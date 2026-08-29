@@ -1,0 +1,59 @@
+import { useEffect } from 'react';
+import type { ToolId } from '@/lib/storage';
+import { ADSENSE_CLIENT_ID, ADSENSE_CONFIGURED, adsEnabledFor } from '@/lib/adConfig';
+
+declare global {
+  interface Window {
+    adsbygoogle?: unknown[];
+  }
+}
+
+/**
+ * A single AdSense banner slot. Renders nothing on tools where ads are
+ * excluded (Pupil Voice). Until real AdSense client/slot IDs are filled in
+ * via src/lib/adConfig.ts, this shows a reserved placeholder instead of a
+ * real ad so the layout is final before the ad code is dropped in.
+ */
+export function AdBanner({
+  toolId,
+  slot,
+  label = 'Advertisement',
+  className = '',
+}: {
+  toolId: ToolId;
+  slot: string;
+  label?: string;
+  className?: string;
+}) {
+  useEffect(() => {
+    if (!ADSENSE_CONFIGURED || !slot) return;
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch {
+      // AdSense script not loaded yet, or blocked by the browser — fail silently.
+    }
+  }, [slot]);
+
+  if (!adsEnabledFor(toolId)) return null;
+
+  if (!ADSENSE_CONFIGURED || !slot) {
+    return (
+      <div
+        className={`flex h-24 w-full items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 text-xs text-muted-foreground ${className}`}
+      >
+        {label} (ad slot reserved)
+      </div>
+    );
+  }
+
+  return (
+    <ins
+      className={`adsbygoogle block ${className}`}
+      style={{ display: 'block' }}
+      data-ad-client={ADSENSE_CLIENT_ID}
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  );
+}
