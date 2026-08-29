@@ -1,0 +1,323 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/plus-jakarta-sans/800.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 20 20% 97%;
+    --foreground: 220 20% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 18%;
+
+    --primary: 354 70% 47%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 20 14% 92%;
+    --secondary-foreground: 220 20% 18%;
+
+    --muted: 20 14% 95%;
+    --muted-foreground: 220 12% 38%;
+
+    --accent: 354 55% 46%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 65% 38%;
+    --success-foreground: 0 0% 100%;
+
+    --freq-1: 0 72% 51%;
+    --freq-1-foreground: 0 0% 100%;
+    --freq-2: 28 90% 55%;
+    --freq-2-foreground: 0 0% 100%;
+    --freq-3: 220 10% 60%;
+    --freq-3-foreground: 0 0% 100%;
+    --freq-4: 90 55% 45%;
+    --freq-4-foreground: 0 0% 100%;
+    --freq-5: 142 65% 38%;
+    --freq-5-foreground: 0 0% 100%;
+
+    --brand-accent: 347 82% 58%;
+    --brand-accent-hover: 345 62% 47%;
+    --brand-accent-foreground: 0 0% 100%;
+
+    --calm: 210 80% 50%;
+    --calm-foreground: 0 0% 100%;
+
+    --border: 20 13% 88%;
+    --input: 20 13% 88%;
+    --ring: 354 70% 47%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 20% 26%;
+    --sidebar-primary: 354 70% 47%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 20 10% 95%;
+    --sidebar-accent-foreground: 220 20% 18%;
+    --sidebar-border: 20 13% 91%;
+    --sidebar-ring: 354 70% 47%;
+  }
+
+  .dark {
+    --brand-accent: 347 78% 64%;
+    --brand-accent-hover: 347 70% 55%;
+    --brand-accent-foreground: 0 0% 100%;
+
+    --background: 220 20% 8%;
+    --foreground: 20 14% 92%;
+
+    --card: 220 18% 12%;
+    --card-foreground: 20 14% 92%;
+
+    --popover: 220 18% 12%;
+    --popover-foreground: 20 14% 92%;
+
+    --primary: 354 70% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 20 14% 92%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 20 10% 60%;
+
+    --accent: 354 55% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 60% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --freq-1: 0 70% 55%;
+    --freq-1-foreground: 0 0% 100%;
+    --freq-2: 28 85% 58%;
+    --freq-2-foreground: 0 0% 100%;
+    --freq-3: 220 8% 55%;
+    --freq-3-foreground: 0 0% 100%;
+    --freq-4: 90 50% 50%;
+    --freq-4-foreground: 0 0% 100%;
+    --freq-5: 142 60% 45%;
+    --freq-5-foreground: 0 0% 100%;
+
+    --calm: 210 75% 60%;
+    --calm-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 354 70% 60%;
+
+    --sidebar-background: 220 20% 10%;
+    --sidebar-foreground: 20 14% 92%;
+    --sidebar-primary: 354 70% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 20 14% 92%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 354 70% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Plus Jakarta Sans Fallback', system-ui, sans-serif;
+  }
+}
+
+@media print {
+  .hq-print {
+    background: #ffffff !important;
+  }
+  .hq-print * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  .hq-print .hq-no-print { display: none !important; }
+
+  .hq-print h1, .hq-print h2, .hq-print h3, .hq-print h4 {
+    page-break-after: avoid;
+    break-after: avoid-page;
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+  }
+
+  .hq-print p, .hq-print li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .hq-print .hq-keep,
+  .hq-print .hq-band,
+  .hq-print thead,
+  .hq-print tfoot {
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+  }
+
+  .hq-print .hq-section {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  .hq-print .hq-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+  .hq-print .hq-break-after {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .hq-print table {
+    page-break-inside: auto;
+    break-inside: auto;
+    border-collapse: collapse;
+  }
+  .hq-print thead { display: table-header-group; }
+  .hq-print tfoot { display: table-footer-group; }
+  .hq-print tr {
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+    page-break-after: auto;
+  }
+  .hq-print tr:first-child {
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
+
+  .hq-print img, .hq-print svg {
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+    max-width: 100%;
+  }
+
+  @page {
+    size: A4;
+    margin: 14mm 14mm 16mm 14mm;
+  }
+  @page :first {
+    margin-top: 12mm;
+  }
+}
+
+.hq-print {
+  background: #f3f4f6;
+}
+.hq-print .hq-paper {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+}
+@media print {
+  .hq-print .hq-paper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+}
+
+.hq-band {
+  background: #ffffff;
+  color: #111827;
+  border-top: 3px solid hsl(var(--primary));
+  border-left: 4px solid hsl(var(--primary));
+  border-bottom: 1px solid #e5e7eb;
+}
+.hq-band .opacity-90 { opacity: 0.7 !important; }
+
+@media print {
+  body:not(:has(.hq-print)) {
+    background: #ffffff !important;
+  }
+  body:not(:has(.hq-print)) * {
+    background: transparent !important;
+    background-image: none !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body:not(:has(.hq-print)) [class*="bg-primary"],
+  body:not(:has(.hq-print)) [class*="bg-muted-foreground"],
+  body:not(:has(.hq-print)) [class*="bg-accent"],
+  body:not(:has(.hq-print)) [class*="bg-destructive"] {
+    background: #000000 !important;
+  }
+  body:not(:has(.hq-print)) table,
+  body:not(:has(.hq-print)) th,
+  body:not(:has(.hq-print)) td {
+    border-color: #000000 !important;
+  }
+  @page { size: A4; margin: 14mm; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-confetti,
+  .animate-celebration-pop,
+  .animate-stone-pulse {
+    animation: fade-in 0.2s ease-out forwards !important;
+  }
+}
+
+@keyframes board-enter {
+  0%   { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0)     scale(1); }
+}
+@keyframes door-enter {
+  0%   { opacity: 0; transform: scale(0.6); }
+  60%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.tool-accent { color: hsl(var(--brand-accent)); }
+
+.tool-card-shadow {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10), 0 1.5px 4px rgba(0, 0, 0, 0.08);
+}
+
+.tool-card-hover {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  will-change: transform;
+}
+.tool-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tool-cta {
+  background-color: hsl(var(--brand-accent));
+  color: hsl(var(--brand-accent-foreground));
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+.tool-cta:hover { background-color: hsl(var(--brand-accent-hover)); }
+.tool-cta:active { transform: translateY(1px); }
+.tool-cta:disabled {
+  background-color: hsl(var(--brand-accent));
+  color: hsl(var(--brand-accent-foreground) / 0.7);
+  cursor: not-allowed;
+  opacity: 0.65;
+}
