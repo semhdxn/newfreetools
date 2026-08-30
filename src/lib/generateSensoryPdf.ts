@@ -1,6 +1,5 @@
 import jsPDF from 'jspdf';
 import type { SensoryArea, Statement } from '@/data/types';
-import { RESPONSE_TYPE_LABEL } from '@/data/sensoryData';
 
 interface AreaResult {
   area: SensoryArea;
@@ -124,26 +123,20 @@ export function generateSensoryPdf(data: PdfReportData) {
   const selectedResults = data.results.filter((r) => data.selectedAreas.includes(r.area.id));
 
   // Create matrix table
-  const startY = yPos;
-  const colWidth = (pageWidth - 30) / 4;
+  const colWidth = (pageWidth - 30) / 2;
 
   doc.setFontSize(8);
   doc.setTextColor(0, 0, 0);
 
+  // Simple table showing selected areas
+  const startY = yPos;
+
   // Headers
   doc.text('Sensory area', 15, yPos);
-  doc.setFillColor(230, 63, 99);
+  doc.setFillColor(34, 160, 92);
   doc.rect(15 + colWidth, yPos - 3, colWidth, 5, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.text('Over-responsive', 15 + colWidth + 2, yPos + 1);
-
-  doc.setFillColor(50, 100, 180);
-  doc.rect(15 + colWidth * 2, yPos - 3, colWidth, 5, 'F');
-  doc.text('Under-responsive', 15 + colWidth * 2 + 2, yPos + 1);
-
-  doc.setFillColor(34, 160, 92);
-  doc.rect(15 + colWidth * 3, yPos - 3, colWidth, 5, 'F');
-  doc.text('Sensory Seeking', 15 + colWidth * 3 + 2, yPos + 1);
+  doc.text('Percentage', 15 + colWidth + 5, yPos + 1);
 
   yPos += 8;
   doc.setTextColor(0, 0, 0);
@@ -152,29 +145,7 @@ export function generateSensoryPdf(data: PdfReportData) {
   selectedResults.forEach((result) => {
     checkPageSpace(8);
     doc.text(result.area.label, 15, yPos);
-
-    const overResp = result.area.responseTypes.includes('over-responsive');
-    const underResp = result.area.responseTypes.includes('under-responsive');
-    const seeking = result.area.responseTypes.includes('sensory-seeking');
-
-    if (overResp) {
-      doc.text(`${result.percentage}%`, 15 + colWidth + 10, yPos);
-    } else {
-      doc.text('—', 15 + colWidth + 10, yPos);
-    }
-
-    if (underResp) {
-      doc.text(`${result.percentage}%`, 15 + colWidth * 2 + 10, yPos);
-    } else {
-      doc.text('—', 15 + colWidth * 2 + 10, yPos);
-    }
-
-    if (seeking) {
-      doc.text(`${result.percentage}%`, 15 + colWidth * 3 + 10, yPos);
-    } else {
-      doc.text('—', 15 + colWidth * 3 + 10, yPos);
-    }
-
+    doc.text(`${result.percentage}%`, 15 + colWidth + 5, yPos);
     yPos += 6;
   });
 
