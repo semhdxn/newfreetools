@@ -3,14 +3,11 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install --cache .npm --prefer-offline
+        - npm install --no-cache
     build:
       commands:
-        - npx tsc --noEmit && npx vite build
+        - npm run build
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
-  cache:
-    paths:
-      - .npm/**/*
