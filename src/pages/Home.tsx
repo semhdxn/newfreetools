@@ -5,12 +5,12 @@ import { Button, Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
 import { TOOL_LABELS, clearAllSessions, clearSession, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
 
-const TOOLS: { id: ToolId; path: string; blurb: string }[] = [
-  { id: 'sensory', path: '/sensory', blurb: 'Tick the statements that sound like the child and see which sensory areas stand out.' },
-  { id: 'behaviour', path: '/behaviour', blurb: 'Rate how often behaviours happen in school to explore possible functions.' },
-  { id: 'home-behaviour', path: '/home-behaviour', blurb: 'A parent-friendly check of behaviour and wellbeing at home, with advice.' },
-  { id: 'student-voice', path: '/student-voice', blurb: "A child-friendly questionnaire so the young person's own view is heard." },
-  { id: 'mwm', path: '/mwm', blurb: 'Choose the outcomes that matter and score progress against them.' },
+const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
+  { id: 'sensory', path: '/sensory', blurb: 'Tick the statements that sound like the child and see which sensory areas stand out.', enabled: true },
+  { id: 'behaviour', path: '/behaviour', blurb: 'Rate how often behaviours happen in school to explore possible functions.', enabled: false },
+  { id: 'home-behaviour', path: '/home-behaviour', blurb: 'A parent-friendly check of behaviour and wellbeing at home, with advice.', enabled: false },
+  { id: 'student-voice', path: '/student-voice', blurb: "A child-friendly questionnaire so the young person's own view is heard.", enabled: false },
+  { id: 'mwm', path: '/mwm', blurb: 'Choose the outcomes that matter and score progress against them.', enabled: false },
 ];
 
 export default function Home() {
@@ -40,9 +40,14 @@ export default function Home() {
         {TOOLS.map((tool) => {
           const s = sessionFor(tool.id);
           return (
-            <Card key={tool.id} className="flex flex-col">
+            <Card key={tool.id} className={`flex flex-col ${!tool.enabled ? 'opacity-50' : ''}`}>
               <h2 className="font-display text-lg font-bold">{TOOL_LABELS[tool.id]}</h2>
               <p className="mt-1 flex-1 text-sm text-muted-foreground">{tool.blurb}</p>
+              {!tool.enabled && (
+                <p className="mt-3 rounded-lg bg-yellow-100 px-3 py-2 text-xs font-semibold text-yellow-800">
+                  Finalising - Back Soon
+                </p>
+              )}
               {s && (
                 <p className="mt-3 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
                   Saved on this device — ID <span className="font-mono">{s.childId}</span>
@@ -50,32 +55,41 @@ export default function Home() {
                 </p>
               )}
               <div className="mt-4 flex gap-2">
-                <Link to={tool.path} className="flex-1">
-                  <Button className="w-full" variant="accent" size={s ? 'md' : 'lg'}>
+                {tool.enabled ? (
+                  <>
+                    <Link to={tool.path} className="flex-1">
+                      <Button className="w-full" variant="accent" size={s ? 'md' : 'lg'}>
+                        <Play className="h-4 w-4 mr-1.5" />
+                        {s ? 'Resume' : 'Start'}
+                      </Button>
+                    </Link>
+                    {s && (
+                      <Link
+                        to={tool.path}
+                        className="flex-1"
+                        onClick={(e) => {
+                          if (
+                            !window.confirm(`Clear the saved ${TOOL_LABELS[tool.id]} answers on this device and start a new one?`)
+                          ) {
+                            e.preventDefault();
+                            return;
+                          }
+                          clearSession(tool.id);
+                          setSessions((prev) => prev.filter((sess) => sess.toolId !== tool.id));
+                        }}
+                      >
+                        <Button className="w-full" variant="outline" size="md">
+                          <RotateCcw className="h-4 w-4 mr-1.5" />
+                          Clear &amp; start new
+                        </Button>
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <Button className="w-full" disabled variant="accent" size={s ? 'md' : 'lg'}>
                     <Play className="h-4 w-4 mr-1.5" />
-                    {s ? 'Resume' : 'Start'}
+                    Coming Soon
                   </Button>
-                </Link>
-                {s && (
-                  <Link
-                    to={tool.path}
-                    className="flex-1"
-                    onClick={(e) => {
-                      if (
-                        !window.confirm(`Clear the saved ${TOOL_LABELS[tool.id]} answers on this device and start a new one?`)
-                      ) {
-                        e.preventDefault();
-                        return;
-                      }
-                      clearSession(tool.id);
-                      setSessions((prev) => prev.filter((sess) => sess.toolId !== tool.id));
-                    }}
-                  >
-                    <Button className="w-full" variant="outline" size="md">
-                      <RotateCcw className="h-4 w-4 mr-1.5" />
-                      Clear &amp; start new
-                    </Button>
-                  </Link>
                 )}
               </div>
             </Card>
