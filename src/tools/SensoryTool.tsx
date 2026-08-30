@@ -11,7 +11,9 @@ import { AdBanner } from '@/components/AdBanner';
 import { InterstitialGate } from '@/components/InterstitialGate';
 import { AffiliateDisclosureBanner, AreaProductGrid } from '@/components/AffiliateProducts';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
-import { RefreshCw, CheckCircle, Download, AlertTriangle, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
+import { PremiumFeatureBanner } from '@/components/PremiumFeatureBanner';
+import { generateSensoryPdf } from '@/lib/generateSensoryPdf';
+import { RefreshCw, CheckCircle, Download, AlertTriangle, ArrowUp, ArrowDown, Trash2, FileText } from 'lucide-react';
 
 interface SensoryState {
   selectedStatements: string[];
@@ -510,6 +512,24 @@ export default function SensoryTool() {
     setCompleted(true);
   };
 
+  const handleDownloadPDF = () => {
+    const today = new Date();
+    const dateStr = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+    
+    try {
+      generateSensoryPdf({
+        childId,
+        completedDate: dateStr,
+        results,
+        selectedAreas: state.selectedAreas,
+        selectedStrategies: state.selectedStrategies,
+      });
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+      alert('Sorry, there was an error generating the PDF. Please try the CSV download instead.');
+    }
+  };
+
   // Intro step with disclaimer
   if (state.step === 'intro') {
     const canProceed = state.disclaimerAgreed && state.permissionConfirmed;
@@ -841,9 +861,16 @@ export default function SensoryTool() {
             </div>
           )}
 
+          {/* Premium Feature Banner */}
+          <PremiumFeatureBanner />
+
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
-            <Button onClick={handleDownloadCSV} className="min-w-[160px] flex-1">
+            <Button onClick={handleDownloadPDF} className="min-w-[160px] flex-1">
+              <FileText className="h-4 w-4 mr-2" />
+              Download PDF
+            </Button>
+            <Button onClick={handleDownloadCSV} className="min-w-[160px] flex-1" variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Download CSV
             </Button>
