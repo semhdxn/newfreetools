@@ -15,11 +15,13 @@
     "react-router-dom": "^7.18.2",
     "@fontsource/inter": "^5.0.8",
     "@fontsource/plus-jakarta-sans": "^5.0.6",
-    "lucide-react": "^0.294.0"
+    "lucide-react": "^0.294.0",
+    "jspdf": "^2.5.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/node": "^20.10.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
