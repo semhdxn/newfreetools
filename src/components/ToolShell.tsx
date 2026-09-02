@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, Progress } from './ui';
 import { Footer } from './Footer';
-import { BrandedHeader } from './BrandedHeader';
 
 /**
  * Shared chrome for every tool: pseudonym badge, step progress, save note and
@@ -32,12 +31,11 @@ export function ToolShell({
 }) {
   const showProgress = typeof stepIndex === 'number' && typeof stepCount === 'number' && stepCount > 0;
   return (
-    <div className="min-h-screen flex flex-col">
-      <BrandedHeader />
-      <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:px-6 flex-1">
+    <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-          ← All tools
+        <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+          <img src="/logo-icon.png" alt="" className="h-6 w-6 object-contain" />
+          <span>← All tools</span>
         </Link>
         <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
           ID: {childId}
@@ -73,7 +71,6 @@ export function ToolShell({
       </div>
 
       <Footer />
-      </div>
     </div>
   );
 }

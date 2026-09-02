@@ -13,6 +13,11 @@ declare global {
  * excluded (Pupil Voice). Until real AdSense client/slot IDs are filled in
  * via src/lib/adConfig.ts, this shows a reserved placeholder instead of a
  * real ad so the layout is final before the ad code is dropped in.
+ *
+ * `toolId` is optional — omit it for placements that aren't tied to a
+ * specific tool (e.g. the home page), which are always eligible for ads.
+ * Pass it whenever the banner sits inside a tool flow so the Pupil Voice
+ * exclusion (and any future per-tool exclusion) is respected.
  */
 export function AdBanner({
   toolId,
@@ -20,7 +25,7 @@ export function AdBanner({
   label = 'Advertisement',
   className = '',
 }: {
-  toolId: ToolId;
+  toolId?: ToolId;
   slot: string;
   label?: string;
   className?: string;
@@ -34,7 +39,7 @@ export function AdBanner({
     }
   }, [slot]);
 
-  if (!adsEnabledFor(toolId)) return null;
+  if (toolId && !adsEnabledFor(toolId)) return null;
 
   if (!ADSENSE_CONFIGURED || !slot) {
     return (

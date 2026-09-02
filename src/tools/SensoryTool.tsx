@@ -918,6 +918,37 @@ export default function SensoryTool() {
       }));
     };
 
+    const handleDownloadCircuitCsv = () => {
+      const planRows: Row[] = [];
+      CIRCUIT_DAYS.forEach(({ key, label }) => {
+        circuit.days[key].forEach((station, idx) => {
+          const area = sensoryAreas.find((a) => a.id === station.areaId);
+          const strategy = getStrategiesForArea(station.areaId).find((s) => s.id === station.strategyId);
+          planRows.push([label, idx + 1, area?.label ?? station.areaId, strategy?.text ?? '', station.minutes]);
+        });
+      });
+      const highlightRows: Row[] = highlightedAreas.map((r) => [r.area.label, `${r.percentage}%`]);
+
+      const csv = buildToolCsv({
+        toolName: 'Sensory Circuit',
+        childId,
+        summaryHeader: [],
+        summaryRows: [],
+        detailHeader: [],
+        detailRows: [],
+        extraBlocks: [
+          { title: 'PLAN', header: ['Item', 'Value'], rows: [['Title', circuit.title]] },
+          { title: 'HIGHLIGHTED AREAS', header: ['Sensory Area', 'Percentage'], rows: highlightRows },
+          {
+            title: 'CIRCUIT PLAN',
+            header: ['Day', 'Station', 'Sensory Area', 'Strategy', 'Minutes'],
+            rows: planRows,
+          },
+        ],
+      });
+      downloadToolCsv('sensory-circuit', childId, csv);
+    };
+
     const activeStations = circuit.days[activeCircuitDay];
     const activeTotal = dayTotal(activeStations);
     const activeDayLabel = CIRCUIT_DAYS.find((d) => d.key === activeCircuitDay)?.label ?? '';
@@ -969,6 +1000,10 @@ export default function SensoryTool() {
                 <Button variant="outline" onClick={regenerateDraft} disabled={allowedStrategies.length === 0}>
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Regenerate draft
+                </Button>
+                <Button variant="outline" onClick={handleDownloadCircuitCsv}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download CSV
                 </Button>
               </div>
             </div>

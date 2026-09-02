@@ -24,11 +24,14 @@ export const INTERSTITIAL_COUNTDOWN_SECONDS = 5;
  * Until ADSENSE_CLIENT_ID is set, <AdBanner> renders a reserved placeholder
  * instead of attempting to load a real ad.
  */
-export const ADSENSE_CLIENT_ID = '';
+export const ADSENSE_CLIENT_ID = 'ca-pub-7172412637015998';
 export const ADSENSE_SLOTS = {
-  inputBanner: '',
-  resultsBanner: '',
-  interstitial: '',
+  // Same ad unit reused across every placement for now — split these out into
+  // separate ad units in AdSense later if per-placement reporting is wanted.
+  inputBanner: '5091818809',
+  resultsBanner: '5091818809',
+  interstitial: '5091818809',
+  homeBanner: '5091818809',
 };
 
 /** True once real AdSense IDs have been filled in above. */

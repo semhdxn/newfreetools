@@ -33,18 +33,16 @@ export interface StudentVoiceCategoryDef {
   id: StudentVoiceCategory;
   label: string;
   description: string;
-  /** Custom strategy bullets added by admins via Content Review. Empty by default. */
-  customStrategies?: { id: string; text: string; source?: string }[];
 }
 
-export let studentVoiceCategories: StudentVoiceCategoryDef[] = [
+export const studentVoiceCategories: StudentVoiceCategoryDef[] = [
   { id: 'attention', label: 'Attention', description: 'Statements about wanting connection, attention or belonging.' },
   { id: 'control',   label: 'Control',   description: 'Statements about needing predictability, fairness or autonomy.' },
   { id: 'sensory',   label: 'Sensory',   description: 'Statements about sensory experiences, worry and how the body feels.' },
   { id: 'escape',    label: 'Escape',    description: 'Statements about wanting to avoid or escape something difficult.' },
 ];
 
-export let studentVoiceStatements: StudentVoiceStatement[] = [
+export const studentVoiceStatements: StudentVoiceStatement[] = [
   {
     "id": "unfair",
     "text": "I feel treated unfairly.",
@@ -274,7 +272,7 @@ export let studentVoiceStatements: StudentVoiceStatement[] = [
   }
 ];
 
-export let studentVoiceEnvironmentItems: StudentVoicePickerItem[] = [
+export const studentVoiceEnvironmentItems: StudentVoicePickerItem[] = [
   {
     "id": "env-0-chair",
     "text": "Where you sit in the class"
@@ -349,7 +347,7 @@ export let studentVoiceEnvironmentItems: StudentVoicePickerItem[] = [
   }
 ];
 
-export let studentVoiceResponseItems: StudentVoicePickerItem[] = [
+export const studentVoiceResponseItems: StudentVoicePickerItem[] = [
   {
     "id": "resp-0-distract",
     "text": "Change the subject or distract me"
@@ -523,116 +521,22 @@ export function notableByCategory(responses: StudentVoiceResponseMap) {
   return out;
 }
 
-// --- Runtime overrides / additions ---
-const _defaultCategories = JSON.parse(JSON.stringify(studentVoiceCategories)) as typeof studentVoiceCategories;
-const _defaultStatements = [...studentVoiceStatements];
-const _defaultEnvItems = [...studentVoiceEnvironmentItems];
-const _defaultRespItems = [...studentVoiceResponseItems];
-
-export interface StudentVoicePublishedPatch {
-  overrides: Array<{ item_type: string; item_id: string; field: string; value: string | null; hidden: boolean }>;
-  additions: Array<{ id: string; item_type: string; parent_id: string; payload: Record<string, any>; hidden: boolean }>;
-}
-
-export function applyStudentVoicePublishedContent(patch: StudentVoicePublishedPatch) {
-  const overrideMap = new Map<string, { value: string | null; hidden: boolean }>();
-  const hiddenIds = new Set<string>();
-  for (const o of patch.overrides) {
-    overrideMap.set(`${o.item_type}|${o.item_id}|${o.field}`, { value: o.value, hidden: o.hidden });
-    if (o.field === '__hidden__' && o.hidden) hiddenIds.add(`${o.item_type}|${o.item_id}`);
-  }
-  const ov = (type: string, id: string, field: string, def: string) =>
-    overrideMap.get(`${type}|${id}|${field}`)?.value ?? def;
-
-  studentVoiceCategories = _defaultCategories.map(c => {
-    const customStrategies = patch.additions
-      .filter(a => a.item_type === 'strategy' && a.parent_id === c.id && !a.hidden)
-      .map(a => ({
-        id: `add-${a.id}`,
-        text: ov('strategy', `add-${a.id}`, 'text', a.payload.text ?? ''),
-        source: ov('strategy', `add-${a.id}`, 'source', a.payload.source ?? '') || undefined,
-      }));
-    return {
-      ...c,
-      label: ov('category', c.id, 'label', c.label),
-      description: ov('category', c.id, 'description', c.description),
-      customStrategies,
-    };
-  });
-
-  const baseStmts = _defaultStatements
-    .filter(s => !hiddenIds.has(`statement|${s.id}`))
-    .map(s => ({
-      ...s,
-      text: ov('statement', s.id, 'text', s.text),
-      followUp: ov('statement', s.id, 'followUp', s.followUp),
-    }));
-  const addedStmts: StudentVoiceStatement[] = patch.additions
-    .filter(a => a.item_type === 'statement' && !a.hidden)
-    .map(a => ({
-      id: `add-${a.id}`,
-      text: a.payload.text ?? '',
-      followUp: a.payload.followUp ?? '',
-      category: (a.payload.category ?? 'attention') as StudentVoiceCategory,
-      type: a.payload.type as StudentVoiceType | undefined,
-    }));
-  studentVoiceStatements = [...baseStmts, ...addedStmts];
-
-  const baseEnv = _defaultEnvItems
-    .filter(i => !hiddenIds.has(`environment|${i.id}`))
-    .map(i => ({ ...i, text: ov('environment', i.id, 'text', i.text) }));
-  const addedEnv: StudentVoicePickerItem[] = patch.additions
-    .filter(a => a.item_type === 'environment' && !a.hidden)
-    .map(a => ({ id: `add-${a.id}`, text: a.payload.text ?? '' }));
-  studentVoiceEnvironmentItems = [...baseEnv, ...addedEnv];
-
-  const baseResp = _defaultRespItems
-    .filter(i => !hiddenIds.has(`response|${i.id}`))
-    .map(i => ({ ...i, text: ov('response', i.id, 'text', i.text) }));
-  const addedResp: StudentVoicePickerItem[] = patch.additions
-    .filter(a => a.item_type === 'response' && !a.hidden)
-    .map(a => ({ id: `add-${a.id}`, text: a.payload.text ?? '' }));
-  studentVoiceResponseItems = [...baseResp, ...addedResp];
-}
-
-/**
- * Resolve a picker-item id to its display text, falling back to the
- * built-in defaults if the admin has hidden the item since the
- * assessment was completed. Returns the id as a last resort so
- * callers can still render *something*.
- */
+/** Resolve a picker-item id to its display text. Returns the id as a last
+ *  resort so callers can still render *something*. */
 export function lookupEnvironmentText(id: string): string {
-  return (
-    studentVoiceEnvironmentItems.find(i => i.id === id)?.text
-    ?? _defaultEnvItems.find(i => i.id === id)?.text
-    ?? studentVoiceResponseItems.find(i => i.id === id)?.text
-    ?? _defaultRespItems.find(i => i.id === id)?.text
-    ?? id
-  );
+  return studentVoiceEnvironmentItems.find(i => i.id === id)?.text ?? id;
 }
 
 export function lookupResponseText(id: string): string {
-  return (
-    studentVoiceResponseItems.find(i => i.id === id)?.text
-    ?? _defaultRespItems.find(i => i.id === id)?.text
-    ?? studentVoiceEnvironmentItems.find(i => i.id === id)?.text
-    ?? _defaultEnvItems.find(i => i.id === id)?.text
-    ?? id
-  );
+  return studentVoiceResponseItems.find(i => i.id === id)?.text ?? id;
 }
 
 /** True when the id belongs to the environment ("things in school") pool. */
 export function isEnvironmentId(id: string): boolean {
-  return (
-    studentVoiceEnvironmentItems.some(i => i.id === id) ||
-    _defaultEnvItems.some(i => i.id === id)
-  );
+  return studentVoiceEnvironmentItems.some(i => i.id === id);
 }
 
 /** True when the id belongs to the adult-response pool. */
 export function isResponseId(id: string): boolean {
-  return (
-    studentVoiceResponseItems.some(i => i.id === id) ||
-    _defaultRespItems.some(i => i.id === id)
-  );
+  return studentVoiceResponseItems.some(i => i.id === id);
 }

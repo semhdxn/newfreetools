@@ -5,7 +5,6 @@ import BehaviourTool from '@/tools/BehaviourTool';
 import HomeBehaviourTool from '@/tools/HomeBehaviourTool';
 import StudentVoiceTool from '@/tools/StudentVoiceTool';
 import MwmTool from '@/tools/MwmTool';
-import { CookieConsent } from '@/components/CookieConsent';
 
 /**
  * HashRouter keeps the build deployable as plain static files (any folder, any
@@ -23,7 +22,6 @@ export default function App() {
         <Route path="/mwm" element={<MwmTool />} />
         <Route path="*" element={<Home />} />
       </Routes>
-      <CookieConsent />
     </HashRouter>
   );
 }

@@ -31,13 +31,20 @@ export default {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        success: 'hsl(var(--success))',
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+        calm: {
+          DEFAULT: 'hsl(var(--calm))',
+          foreground: 'hsl(var(--calm-foreground))',
+        },
         freq: {
-          1: 'hsl(var(--freq-1))',
-          2: 'hsl(var(--freq-2))',
-          3: 'hsl(var(--freq-3))',
-          4: 'hsl(var(--freq-4))',
-          5: 'hsl(var(--freq-5))',
+          1: { DEFAULT: 'hsl(var(--freq-1))', foreground: 'hsl(var(--freq-1-foreground))' },
+          2: { DEFAULT: 'hsl(var(--freq-2))', foreground: 'hsl(var(--freq-2-foreground))' },
+          3: { DEFAULT: 'hsl(var(--freq-3))', foreground: 'hsl(var(--freq-3-foreground))' },
+          4: { DEFAULT: 'hsl(var(--freq-4))', foreground: 'hsl(var(--freq-4-foreground))' },
+          5: { DEFAULT: 'hsl(var(--freq-5))', foreground: 'hsl(var(--freq-5-foreground))' },
         },
       },
       borderRadius: {
@@ -48,6 +55,29 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        glow: '0 4px 25px -5px hsl(354 70% 54% / 0.15), 0 8px 10px -6px hsl(354 70% 54% / 0.08)',
+        soft: '0 2px 15px -3px hsl(354 70% 54% / 0.08), 0 4px 6px -4px hsl(354 70% 54% / 0.05)',
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-out': {
+          '0%': { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(-6px)' },
+        },
+        'stone-pulse': {
+          '0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--primary) / 0.35)' },
+          '50%': { boxShadow: '0 0 0 6px hsl(var(--primary) / 0)' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.25s ease-out',
+        'fade-out': 'fade-out 0.6s ease-out forwards',
+        'stone-pulse': 'stone-pulse 1.8s ease-in-out infinite',
       },
     },
   },

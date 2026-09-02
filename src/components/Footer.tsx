@@ -7,8 +7,10 @@ export function Footer() {
         tools. Products are suggestions only, not a recommendation or endorsement of any specific brand.
       </p>
       <p className="mt-2">
-        These tools may also display advertising (Google AdSense) to help keep them free. Ads and product suggestions
-        are never shown on the Pupil Voice tool, which is completed directly by the young person.
+        These tools are a free, basic version of the full SEMH Toolkit (premium). Adverts and sponsored products
+        (Google AdSense and affiliate links) help cover the cost of developing and running these free resources, so
+        they can stay free to use. Ads and product suggestions are never shown on the Pupil Voice tool, which is
+        completed directly by the young person.
       </p>
     </footer>
   );

@@ -1,17 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, RotateCcw } from 'lucide-react';
+import { Play, RotateCcw, Sparkles } from 'lucide-react';
 import { Button, Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
+import { AdBanner } from '@/components/AdBanner';
+import { ADSENSE_SLOTS } from '@/lib/adConfig';
 import { TOOL_LABELS, clearAllSessions, clearSession, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
 
 const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
   { id: 'sensory', path: '/sensory', blurb: 'Tick the statements that sound like the child and see which sensory areas stand out.', enabled: true },
-  { id: 'behaviour', path: '/behaviour', blurb: 'Rate how often behaviours happen in school to explore possible functions.', enabled: false },
+  { id: 'behaviour', path: '/behaviour', blurb: 'Rate how often behaviours happen in school to explore possible functions.', enabled: true },
   { id: 'home-behaviour', path: '/home-behaviour', blurb: 'A parent-friendly check of behaviour and wellbeing at home, with advice.', enabled: false },
-  { id: 'student-voice', path: '/student-voice', blurb: "A child-friendly questionnaire so the young person's own view is heard.", enabled: false },
+  { id: 'student-voice', path: '/student-voice', blurb: "A child-friendly questionnaire so the young person's own view is heard.", enabled: true },
   { id: 'mwm', path: '/mwm', blurb: 'Choose the outcomes that matter and score progress against them.', enabled: false },
 ];
+
+/** A distinct pastel accent per tool card — complementary pairings around the
+ *  brand's pink/red primary (~354° hue), kept light enough that the existing
+ *  dark foreground/muted-foreground text stays fully readable on top. */
+const TOOL_ACCENTS: Record<ToolId, { bg: string; border: string }> = {
+  sensory: { bg: 'hsl(200 70% 95%)', border: 'hsl(200 55% 80%)' },
+  behaviour: { bg: 'hsl(30 75% 94%)', border: 'hsl(30 60% 80%)' },
+  'home-behaviour': { bg: 'hsl(266 50% 96%)', border: 'hsl(266 40% 84%)' },
+  'student-voice': { bg: 'hsl(46 80% 93%)', border: 'hsl(46 60% 78%)' },
+  mwm: { bg: 'hsl(150 40% 94%)', border: 'hsl(150 35% 79%)' },
+};
 
 export default function Home() {
   const [sessions, setSessions] = useState<ToolSession[]>([]);
@@ -21,6 +34,9 @@ export default function Home() {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+      <div className="mb-6">
+        <img src="/logo.png" alt="SEMH — Social, Emotional and Mental Health" className="h-14 w-auto object-contain sm:h-16" />
+      </div>
       <h1 className="font-display text-3xl font-extrabold sm:text-4xl">SEMH Free Tools</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">
         Five free questionnaires for sensory, behaviour and wellbeing. Everything runs in your browser — there is no account, no
@@ -36,11 +52,27 @@ export default function Home() {
         </p>
       </Card>
 
+      <div className="mt-4 flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
+        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+        <p>
+          These are free, basic versions of the tools in the full SEMH Toolkit (premium) — saved records, richer reports and
+          fuller strategy libraries live there. Adverts and sponsored products on this site help cover the cost of developing
+          and running these free tools, so they can stay free to use.
+        </p>
+      </div>
+
+      <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" className="mt-6" />
+
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {TOOLS.map((tool) => {
           const s = sessionFor(tool.id);
+          const accent = TOOL_ACCENTS[tool.id];
           return (
-            <Card key={tool.id} className={`flex flex-col ${!tool.enabled ? 'opacity-50' : ''}`}>
+            <Card
+              key={tool.id}
+              className={`flex flex-col border ${!tool.enabled ? 'opacity-50' : ''}`}
+              style={{ backgroundColor: accent.bg, borderColor: accent.border }}
+            >
               <h2 className="font-display text-lg font-bold">{TOOL_LABELS[tool.id]}</h2>
               <p className="mt-1 flex-1 text-sm text-muted-foreground">{tool.blurb}</p>
               {!tool.enabled && (
@@ -96,6 +128,8 @@ export default function Home() {
           );
         })}
       </div>
+
+      <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" className="mt-8" />
 
       {sessions.length > 0 && (
         <div className="mt-10 border-t border-border pt-6">
