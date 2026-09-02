@@ -7,7 +7,10 @@
  * primitive; everything is coerced to a string and properly escaped per
  * RFC 4180 (double-quoting + doubling embedded quotes).
  */
-export function rowsToCsv(rows: Array<Array<string | number | null | undefined>>): string {
+/** One CSV row: an array of cells, each coerced to a string on export. */
+export type Row = Array<string | number | null | undefined>;
+
+export function rowsToCsv(rows: Row[]): string {
   const escape = (v: unknown): string => {
     if (v === null || v === undefined) return '';
     const s = String(v);

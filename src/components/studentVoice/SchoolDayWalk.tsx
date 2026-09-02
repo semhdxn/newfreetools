@@ -593,7 +593,7 @@ export const SchoolDayWalk = ({ initial, onBack, onContinue, saveSlot, topPad }:
               </p>
             )}
             <Button
-              size={finished ? 'default' : 'sm'}
+              size={finished ? 'md' : 'sm'}
               onClick={() => { if (replaying) stopReplay(); goToReview(); }}
               className={`min-h-[44px] ${finished && !replaying ? 'sm:min-h-[52px] px-5 shadow-lg ring-2 ring-primary/40 ring-offset-2 ring-offset-background animate-pulse font-semibold' : ''}`}
               aria-label={finished ? 'Review and save your feelings' : 'Skip to the review screen'}

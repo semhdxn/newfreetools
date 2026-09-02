@@ -19,7 +19,13 @@ import {
   BASELINE_THRESHOLD,
   SENSORY_ALERT_THRESHOLD,
   FREQUENCY_OPTIONS,
+  type ScoreMap,
 } from '@/data/behaviourToolData';
+
+/** Zeroed fallback so `getScores()` always returns a fully-typed ScoreMap,
+ *  even before a cohort is picked — avoids widening the return type to
+ *  `{} | ScoreMap`, which breaks indexing by BehaviourFunction elsewhere. */
+const EMPTY_SCORES: ScoreMap = { control: 0, attention: 0, escape: 0, sensory: 0, 'self-esteem': 0 };
 
 /** A function's statements were answered "Often" or "Very Often" often enough
  *  to be worth acting on — strategies are only ever shown/exported for
@@ -100,8 +106,8 @@ export default function BehaviourTool() {
     return getStatementsForCohort(state.cohort);
   };
 
-  const getScores = () => {
-    if (!state.cohort) return {};
+  const getScores = (): ScoreMap => {
+    if (!state.cohort) return EMPTY_SCORES;
     return calculateScores(state.responses, state.cohort);
   };
 
