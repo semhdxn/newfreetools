@@ -4,7 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7172412637015998" crossorigin="anonymous"></script>
+    <!--
+      The AdSense base script is intentionally NOT loaded here. Loading it
+      unconditionally on every page means Google's Auto/Anchor ads can be
+      injected on routes that are meant to be completely ad-free (Pupil
+      Voice), regardless of the app's own per-tool ad gating. It is instead
+      loaded dynamically, only on ad-eligible routes, by
+      src/components/AdsenseLoader.tsx.
+    -->
     <title>Free SEMH Tools — Sensory, Behaviour & Pupil Voice Checklists</title>
     <meta
       name="description"
