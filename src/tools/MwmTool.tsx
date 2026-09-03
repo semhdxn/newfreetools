@@ -430,5 +430,9 @@ export default function MwmTool() {
   }
 
   // Fallback
-  return <ToolShell title="Measure What Matters" childId={childId} onRestart={restart} />;
+  return (
+    <ToolShell title="Measure What Matters" childId={childId} onRestart={restart}>
+      <div />
+    </ToolShell>
+  );
 }
