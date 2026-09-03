@@ -418,7 +418,8 @@ export default function StudentVoiceTool() {
             }
           }}
         >
-          <img src="/logo-icon.png" alt="" className="h-6 w-6 object-contain" />
+          {/* Logo now lives in the shared white heading bar (src/components/Header.tsx) —
+              plain text back-link here rather than repeating the icon. */}
           <span>← All tools</span>
         </Link>
         <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">ID: {childId}</span>
@@ -1100,7 +1101,8 @@ export default function StudentVoiceTool() {
         <div className="w-full max-w-2xl space-y-4">
           <div className="mb-1 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-              <img src="/logo-icon.png" alt="" className="h-6 w-6 object-contain" />
+              {/* Logo now lives in the shared white heading bar (src/components/Header.tsx) —
+                  plain text back-link here rather than repeating the icon. */}
               <span>← All tools</span>
             </Link>
             <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">ID: {childId}</span>
@@ -1215,7 +1217,8 @@ export default function StudentVoiceTool() {
         <div className="w-full max-w-2xl space-y-4">
           <div className="mb-1 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-              <img src="/logo-icon.png" alt="" className="h-6 w-6 object-contain" />
+              {/* Logo now lives in the shared white heading bar (src/components/Header.tsx) —
+                  plain text back-link here rather than repeating the icon. */}
               <span>← All tools</span>
             </Link>
             <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">ID: {childId}</span>
@@ -1272,7 +1275,8 @@ export default function StudentVoiceTool() {
         <div className="w-full max-w-2xl space-y-4">
           <div className="mb-1 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-              <img src="/logo-icon.png" alt="" className="h-6 w-6 object-contain" />
+              {/* Logo now lives in the shared white heading bar (src/components/Header.tsx) —
+                  plain text back-link here rather than repeating the icon. */}
               <span>← All tools</span>
             </Link>
             <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">ID: {childId}</span>

@@ -6,6 +6,7 @@ import HomeBehaviourTool from '@/tools/HomeBehaviourTool';
 import StudentVoiceTool from '@/tools/StudentVoiceTool';
 import MwmTool from '@/tools/MwmTool';
 import { AdsenseLoader } from '@/components/AdsenseLoader';
+import { Header } from '@/components/Header';
 
 /**
  * HashRouter keeps the build deployable as plain static files (any folder, any
@@ -17,6 +18,7 @@ export default function App() {
       {/* Needs router context (useLocation) to know which route it's on, so it
           renders inside HashRouter alongside the routes it's gating. */}
       <AdsenseLoader />
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/sensory" element={<SensoryTool />} />

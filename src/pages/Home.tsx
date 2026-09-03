@@ -33,126 +33,133 @@ export default function Home() {
   const sessionFor = (id: ToolId) => sessions.find((s) => s.toolId === id);
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
-      <div className="mb-6">
-        <img src="/logo.png" alt="SEMH — Social, Emotional and Mental Health" className="h-14 w-auto object-contain sm:h-16" />
-      </div>
-      <h1 className="font-display text-3xl font-extrabold sm:text-4xl">SEMH Free Tools</h1>
-      <p className="mt-3 max-w-2xl text-muted-foreground">
-        Five free questionnaires for sensory, behaviour and wellbeing. Everything runs in your browser — there is no account, no
-        upload and no server. When you finish, you download your results as a CSV spreadsheet.
-      </p>
+    // The two <aside> rails only show at xl+ (they'd have nowhere to go on tablet/mobile),
+    // so ads live down the side instead of stacked as banners between the card grid.
+    <div className="mx-auto flex w-full max-w-[1400px] justify-center gap-6 px-4 py-10">
+      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
+        <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" orientation="vertical" />
+      </aside>
 
-      <Card className="mt-6 border-accent/40 bg-accent/5">
-        <h2 className="font-display text-base font-bold">Privacy</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Never enter a child's name, initials or any other identifying detail. Each questionnaire is labelled with a randomly
-          generated ID such as <span className="font-mono">brave-otter-42</span>. Answers are saved only in this browser, so clearing
-          your browser data or using another device will remove them.
+      <div className="w-full max-w-4xl sm:px-6">
+        {/* The logo now lives in the shared white heading bar (src/components/Header.tsx),
+            rendered once for every page in App.tsx — no need to repeat it here. */}
+        <h1 className="font-display text-3xl font-extrabold sm:text-4xl">SEMH Free Tools</h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          Five free questionnaires for sensory, behaviour and wellbeing. Everything runs in your browser — there is no account, no
+          upload and no server. When you finish, you download your results as a CSV spreadsheet.
         </p>
-      </Card>
 
-      <div className="mt-4 flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
-        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-        <p>
-          These are free, basic versions of the tools in the full SEMH Toolkit (premium) — saved records, richer reports and
-          fuller strategy libraries live there. Adverts and sponsored products on this site help cover the cost of developing
-          and running these free tools, so they can stay free to use.
-        </p>
-      </div>
+        <Card className="mt-6 border-accent/40 bg-accent/5">
+          <h2 className="font-display text-base font-bold">Privacy</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Never enter a child's name, initials or any other identifying detail. Each questionnaire is labelled with a randomly
+            generated ID such as <span className="font-mono">brave-otter-42</span>. Answers are saved only in this browser, so clearing
+            your browser data or using another device will remove them.
+          </p>
+        </Card>
 
-      <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" className="mt-6" />
+        <div className="mt-4 flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
+          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+          <p>
+            These are free, basic versions of the tools in the full SEMH Toolkit (premium) — saved records, richer reports and
+            fuller strategy libraries live there. Adverts and sponsored products on this site help cover the cost of developing
+            and running these free tools, so they can stay free to use.
+          </p>
+        </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {TOOLS.map((tool) => {
-          const s = sessionFor(tool.id);
-          const accent = TOOL_ACCENTS[tool.id];
-          return (
-            <Card
-              key={tool.id}
-              className={`flex flex-col border ${!tool.enabled ? 'opacity-50' : ''}`}
-              style={{ backgroundColor: accent.bg, borderColor: accent.border }}
-            >
-              <h2 className="font-display text-lg font-bold">{TOOL_LABELS[tool.id]}</h2>
-              <p className="mt-1 flex-1 text-sm text-muted-foreground">{tool.blurb}</p>
-              {!tool.enabled && (
-                <p className="mt-3 rounded-lg bg-yellow-100 px-3 py-2 text-xs font-semibold text-yellow-800">
-                  Finalising - Back Soon
-                </p>
-              )}
-              {s && (
-                <p className="mt-3 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Saved on this device — ID <span className="font-mono">{s.childId}</span>
-                  {s.completed ? ' (completed)' : ' (in progress)'}
-                </p>
-              )}
-              <div className="mt-4 flex gap-2">
-                {tool.enabled ? (
-                  <>
-                    <Link to={tool.path} className="flex-1">
-                      <Button className="w-full" variant="accent" size={s ? 'md' : 'lg'}>
-                        <Play className="h-4 w-4 mr-1.5" />
-                        {s ? 'Resume' : 'Start'}
-                      </Button>
-                    </Link>
-                    {s && (
-                      <Link
-                        to={tool.path}
-                        className="flex-1"
-                        onClick={(e) => {
-                          if (
-                            !window.confirm(`Clear the saved ${TOOL_LABELS[tool.id]} answers on this device and start a new one?`)
-                          ) {
-                            e.preventDefault();
-                            return;
-                          }
-                          clearSession(tool.id);
-                          setSessions((prev) => prev.filter((sess) => sess.toolId !== tool.id));
-                        }}
-                      >
-                        <Button className="w-full" variant="outline" size="md">
-                          <RotateCcw className="h-4 w-4 mr-1.5" />
-                          Clear &amp; start new
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {TOOLS.map((tool) => {
+            const s = sessionFor(tool.id);
+            const accent = TOOL_ACCENTS[tool.id];
+            return (
+              <Card
+                key={tool.id}
+                className={`flex flex-col border ${!tool.enabled ? 'opacity-50' : ''}`}
+                style={{ backgroundColor: accent.bg, borderColor: accent.border }}
+              >
+                <h2 className="font-display text-lg font-bold">{TOOL_LABELS[tool.id]}</h2>
+                <p className="mt-1 flex-1 text-sm text-muted-foreground">{tool.blurb}</p>
+                {!tool.enabled && (
+                  <p className="mt-3 rounded-lg bg-yellow-100 px-3 py-2 text-xs font-semibold text-yellow-800">
+                    Finalising - Back Soon
+                  </p>
+                )}
+                {s && (
+                  <p className="mt-3 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+                    Saved on this device — ID <span className="font-mono">{s.childId}</span>
+                    {s.completed ? ' (completed)' : ' (in progress)'}
+                  </p>
+                )}
+                <div className="mt-4 flex gap-2">
+                  {tool.enabled ? (
+                    <>
+                      <Link to={tool.path} className="flex-1">
+                        <Button className="w-full" variant="accent" size={s ? 'md' : 'lg'}>
+                          <Play className="h-4 w-4 mr-1.5" />
+                          {s ? 'Resume' : 'Start'}
                         </Button>
                       </Link>
-                    )}
-                  </>
-                ) : (
-                  <Button className="w-full" disabled variant="accent" size={s ? 'md' : 'lg'}>
-                    <Play className="h-4 w-4 mr-1.5" />
-                    Coming Soon
-                  </Button>
-                )}
-              </div>
-            </Card>
-          );
-        })}
+                      {s && (
+                        <Link
+                          to={tool.path}
+                          className="flex-1"
+                          onClick={(e) => {
+                            if (
+                              !window.confirm(`Clear the saved ${TOOL_LABELS[tool.id]} answers on this device and start a new one?`)
+                            ) {
+                              e.preventDefault();
+                              return;
+                            }
+                            clearSession(tool.id);
+                            setSessions((prev) => prev.filter((sess) => sess.toolId !== tool.id));
+                          }}
+                        >
+                          <Button className="w-full" variant="outline" size="md">
+                            <RotateCcw className="h-4 w-4 mr-1.5" />
+                            Clear &amp; start new
+                          </Button>
+                        </Link>
+                      )}
+                    </>
+                  ) : (
+                    <Button className="w-full" disabled variant="accent" size={s ? 'md' : 'lg'}>
+                      <Play className="h-4 w-4 mr-1.5" />
+                      Coming Soon
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+
+        {sessions.length > 0 && (
+          <div className="mt-10 border-t border-border pt-6">
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (window.confirm('Delete all saved answers from this browser?')) {
+                  clearAllSessions();
+                  setSessions([]);
+                }
+              }}
+            >
+              Clear all saved data
+            </Button>
+          </div>
+        )}
+
+        <p className="mt-10 text-xs text-muted-foreground">
+          These tools are for reflection and planning. They are not a diagnostic assessment and do not replace advice from a
+          qualified professional. See <Link className="underline" to="/">the full SEMH Toolkit</Link> for saved records and reports.
+        </p>
+
+        <Footer />
       </div>
 
-      <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" className="mt-8" />
-
-      {sessions.length > 0 && (
-        <div className="mt-10 border-t border-border pt-6">
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (window.confirm('Delete all saved answers from this browser?')) {
-                clearAllSessions();
-                setSessions([]);
-              }
-            }}
-          >
-            Clear all saved data
-          </Button>
-        </div>
-      )}
-
-      <p className="mt-10 text-xs text-muted-foreground">
-        These tools are for reflection and planning. They are not a diagnostic assessment and do not replace advice from a
-        qualified professional. See <Link className="underline" to="/">the full SEMH Toolkit</Link> for saved records and reports.
-      </p>
-
-      <Footer />
+      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
+        <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" orientation="vertical" />
+      </aside>
     </div>
   );
 }

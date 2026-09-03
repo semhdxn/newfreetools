@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Megaphone } from 'lucide-react';
 import { Button } from '@/components/ui';
 import type { ToolId } from '@/lib/storage';
-import { INTERSTITIAL_COUNTDOWN_SECONDS } from '@/lib/adConfig';
+import { ADSENSE_SLOTS, INTERSTITIAL_COUNTDOWN_SECONDS } from '@/lib/adConfig';
 import { AdBanner } from './AdBanner';
 
 /**
@@ -27,7 +27,7 @@ export function InterstitialGate({ toolId, onContinue }: { toolId: ToolId; onCon
         <Megaphone className="h-4 w-4" />
         Advertisement
       </div>
-      <AdBanner toolId={toolId} slot="interstitial" className="h-40" />
+      <AdBanner toolId={toolId} slot={ADSENSE_SLOTS.interstitial} className="h-40" />
       <Button size="lg" onClick={onContinue} disabled={!ready} className="w-full max-w-xs">
         {ready ? 'Continue' : `Continue (${secondsLeft})`}
       </Button>

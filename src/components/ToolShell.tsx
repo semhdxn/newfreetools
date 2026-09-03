@@ -33,8 +33,9 @@ export function ToolShell({
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        {/* The logo lives in the shared header above (src/components/Header.tsx), so this
+            is a plain text back-link rather than repeating the icon here too. */}
         <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-          <img src="/logo-icon.png" alt="" className="h-6 w-6 object-contain" />
           <span>← All tools</span>
         </Link>
         <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
@@ -92,7 +93,10 @@ export function StepNav({
   hideBack?: boolean;
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
+    // z-[2147483647] (the max CSS z-index) so this stays clickable above a
+    // Google Auto/Anchor ad, which also docks fixed to the bottom of the
+    // viewport and otherwise renders on top of — and blocks — these controls.
+    <div className="fixed inset-x-0 bottom-0 z-[2147483647] border-t border-border bg-card/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         {hideBack ? <span /> : (
           <Button variant="outline" onClick={onBack} disabled={!onBack}>
