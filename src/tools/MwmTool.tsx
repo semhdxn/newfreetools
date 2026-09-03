@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Card, Button } from '@/components/ui';
+import { Card, Button, CheckItem } from '@/components/ui';
 import { ToolShell, StepNav } from '@/components/ToolShell';
 import { Plus, ArrowLeft, Gauge, Download } from 'lucide-react';
 import { MWM_GLOBAL_CRITERIA } from '@/data/mwmCriteriaData';
@@ -22,7 +22,16 @@ import CustomCriteriaForm from '@/components/mwm/CustomCriteriaForm';
 
 type MwmPhase = 'index' | 'builder' | 'download';
 
+/** Same "no liability" framing as the other tools, worded for what this one actually does —
+ *  build a printable criteria-based questionnaire rather than score a child directly. */
+const DISCLAIMER_TEXT = `The criteria, statements and templates provided by this tool are for general reference only and should not be considered professional, specialist or medical advice. The owners and creators of this website accept no liability for any losses or damages arising from the use of this tool or any document created with it. This tool has been created using publicly available resources to help build printable questionnaires. By proceeding, you agree to these terms.`;
+
 interface MwmToolState {
+  /** Gates access to the tool until both boxes below are checked and "Continue" is clicked —
+   *  mirrors every other tool's required disclaimer/permission step. */
+  agreedToDisclaimer: boolean;
+  permissionConfirmed: boolean;
+  started: boolean;
   phase: MwmPhase;
   activeQuestionnaireId: string | null;
   // Builder state
@@ -37,6 +46,9 @@ interface MwmToolState {
 
 function initialState(): MwmToolState {
   return {
+    agreedToDisclaimer: false,
+    permissionConfirmed: false,
+    started: false,
     phase: 'index',
     activeQuestionnaireId: null,
     builderTitle: '',
@@ -161,9 +173,16 @@ export default function MwmTool() {
           createdDate: new Date().toLocaleDateString(),
         });
       }
-      // Go back to index
+      // Go back to index — keep the already-accepted disclaimer/permission so it isn't
+      // re-asked after every questionnaire built in the same session.
       setTimeout(() => {
-        setState((prev) => ({ ...initialState(), phase: 'index' }));
+        setState((prev) => ({
+          ...initialState(),
+          agreedToDisclaimer: prev.agreedToDisclaimer,
+          permissionConfirmed: prev.permissionConfirmed,
+          started: prev.started,
+          phase: 'index',
+        }));
         setTemplates(getAllQuestionnaires());
       }, 500);
       return;
@@ -178,6 +197,58 @@ export default function MwmTool() {
 
     return () => clearTimeout(timer);
   }, [state.phase, state.downloadCountdown, activeQuestionnaire, selectedCriteria]);
+
+  // ========== DISCLAIMER / PERMISSION GATE ==========
+  if (!state.started) {
+    const canContinue = state.agreedToDisclaimer && state.permissionConfirmed;
+
+    return (
+      <ToolShell title="Measure What Matters" childId={childId} onRestart={restart}>
+        <Card>
+          <div className="space-y-4">
+            <p className="text-xs text-muted-foreground">
+              No names or initials are collected — a Child ID keeps this pseudonymous.
+            </p>
+
+            <div className="bg-muted p-3 rounded border border-border">
+              <p className="text-sm font-medium">Child ID: {childId}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                This ID links your questionnaires together and keeps them anonymous.
+              </p>
+            </div>
+
+            <div className="border border-border rounded p-3 bg-muted/50">
+              <p className="text-xs leading-relaxed text-foreground">{DISCLAIMER_TEXT}</p>
+            </div>
+
+            <div className="space-y-2">
+              <CheckItem
+                label="I have read and agree to the disclaimer above."
+                checked={state.agreedToDisclaimer}
+                onChange={(v) => setState((prev) => ({ ...prev, agreedToDisclaimer: v }))}
+              />
+              <CheckItem
+                label="I confirm I have the appropriate permission (from my setting and/or the young person's parent or carer) to use this tool to create and use questionnaires."
+                checked={state.permissionConfirmed}
+                onChange={(v) => setState((prev) => ({ ...prev, permissionConfirmed: v }))}
+              />
+            </div>
+
+            <Button
+              onClick={() => setState((prev) => ({ ...prev, started: true }))}
+              disabled={!canContinue}
+              className="w-full"
+              type="button"
+            >
+              Continue →
+            </Button>
+          </div>
+        </Card>
+
+        <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.homeBanner} />
+      </ToolShell>
+    );
+  }
 
   // ========== INDEX / START SCREEN ==========
   if (state.phase === 'index') {
@@ -223,6 +294,9 @@ export default function MwmTool() {
                             if (loaded) {
                               setState((prev) => ({
                                 ...initialState(),
+                                agreedToDisclaimer: prev.agreedToDisclaimer,
+                                permissionConfirmed: prev.permissionConfirmed,
+                                started: prev.started,
                                 activeQuestionnaireId: t.id,
                                 builderTitle: loaded.title,
                                 builderDescription: loaded.description,
@@ -270,7 +344,15 @@ export default function MwmTool() {
         stepIndex={1}
         stepCount={2}
         stepLabel="Builder"
-        onRestart={() => setState((prev) => ({ ...initialState(), phase: 'index' }))}
+        onRestart={() =>
+          setState((prev) => ({
+            ...initialState(),
+            agreedToDisclaimer: prev.agreedToDisclaimer,
+            permissionConfirmed: prev.permissionConfirmed,
+            started: prev.started,
+            phase: 'index',
+          }))
+        }
         footer={
           <StepNav
             onBack={() => setState((prev) => ({ ...prev, phase: 'index' }))}

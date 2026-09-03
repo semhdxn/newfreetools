@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { ToolShell, ResultsCard } from '@/components/ToolShell';
-import { Button, Card, Progress, ScoreBar } from '@/components/ui';
+import { Button, Card, CheckItem, Progress, ScoreBar } from '@/components/ui';
 import { Download, ExternalLink } from 'lucide-react';
 import {
   FREQUENCY_OPTIONS,
@@ -20,7 +20,16 @@ import { PremiumLockButton } from '@/components/PremiumLockButton';
 /** A break appears after every Nth question — mirrors BehaviourTool's per-statement cadence. */
 const INTERSTITIAL_EVERY_N_QUESTIONS = 5;
 
+/** Same wording as BehaviourTool's disclaimer — Home Behaviour is the at-home counterpart of
+ *  the same functional-analysis approach, so it carries the same liability disclaimer. */
+const DISCLAIMER_TEXT = `The functional analysis and selected strategies provided by this tool should not be considered professional, specialist or medical advice. The owners and creators of this website accept no liability for any losses or damages arising from the use of this tool. This tool has been created using publicly available resources to help identify likely functions of behaviour and suggest general strategies. By proceeding, you agree to these terms.`;
+
 interface HomeBehaviourState {
+  /** Gates access to the questionnaire until both boxes below are checked and "Start
+   *  questionnaire" is clicked — mirrors every other tool's required disclaimer/permission step. */
+  agreedToDisclaimer: boolean;
+  permissionConfirmed: boolean;
+  started: boolean;
   responses: Record<string, number>;
   /** Index into the flat, already-interleaved `homeBehaviourQuestions` array — questions are
    *  asked one at a time in that mixed order, never grouped or blocked by category. */
@@ -33,6 +42,9 @@ const labelFor = (value: number) => FREQUENCY_OPTIONS.find((o) => o.value === va
 
 export default function HomeBehaviourTool() {
   const { state, childId, setState, setCompleted, restart } = useToolSession<HomeBehaviourState>('home-behaviour', {
+    agreedToDisclaimer: false,
+    permissionConfirmed: false,
+    started: false,
     responses: {},
     index: 0,
     finished: false,
@@ -162,6 +174,57 @@ export default function HomeBehaviourTool() {
         toolId="home-behaviour"
         onContinue={() => setState((prev) => ({ ...prev, interstitialPending: false }))}
       />
+    );
+  }
+
+  if (!state.started) {
+    const canContinue = state.agreedToDisclaimer && state.permissionConfirmed;
+
+    return (
+      <ToolShell title="Home Behaviour" childId={childId} onRestart={restart}>
+        <Card>
+          <div className="space-y-4">
+            <p className="text-xs text-muted-foreground">
+              No names or initials are collected — a Child ID keeps this pseudonymous.
+            </p>
+
+            <div className="bg-muted p-3 rounded border border-border">
+              <p className="text-sm font-medium">Child ID: {childId}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                This ID links your answers together and keeps them anonymous.
+              </p>
+            </div>
+
+            <div className="border border-border rounded p-3 bg-muted/50">
+              <p className="text-xs leading-relaxed text-foreground">{DISCLAIMER_TEXT}</p>
+            </div>
+
+            <div className="space-y-2">
+              <CheckItem
+                label="I have read and agree to the disclaimer above."
+                checked={state.agreedToDisclaimer}
+                onChange={(v) => setState((prev) => ({ ...prev, agreedToDisclaimer: v }))}
+              />
+              <CheckItem
+                label="I confirm I have the appropriate permission (from my setting and/or the young person's parent or carer) to enter this information."
+                checked={state.permissionConfirmed}
+                onChange={(v) => setState((prev) => ({ ...prev, permissionConfirmed: v }))}
+              />
+            </div>
+
+            <Button
+              onClick={() => setState((prev) => ({ ...prev, started: true }))}
+              disabled={!canContinue}
+              className="w-full"
+              type="button"
+            >
+              Start questionnaire →
+            </Button>
+          </div>
+        </Card>
+
+        <AdBanner toolId="home-behaviour" slot={ADSENSE_SLOTS.inputBanner} />
+      </ToolShell>
     );
   }
 

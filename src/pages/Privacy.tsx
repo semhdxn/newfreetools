@@ -18,8 +18,9 @@ export default function Privacy() {
         <p className="text-sm text-muted-foreground">
           This site has no account, no server and no database. Every questionnaire runs entirely in your browser: your
           answers, scores and any young person's pseudonymous ID never leave your device unless you choose to download
-          or email a CSV yourself. We don't collect, see or store any of it. We do use Google Analytics to see overall,
-          anonymised site usage (see "Analytics" below) — but never on Pupil Voice, and never your actual answers.
+          or email a CSV yourself. We don't collect, see or store any of it. We only use Google Analytics to see overall,
+          anonymised site usage if you accept the cookie banner (see "Analytics" below) — it never runs on Pupil Voice,
+          it's off by default until you accept, and it never sees your actual answers.
         </p>
       </Card>
 
@@ -72,22 +73,27 @@ export default function Privacy() {
           <h2 className="font-display text-lg font-bold">Analytics</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             We use Google Analytics to understand overall usage of this site — for example, which tools are used and how
-            often — so we know what's worth improving. This means a script from Google runs in your browser and may use
-            cookies or similar technology to recognise repeat visits; it can see general technical details like your
-            approximate location (from your IP address, which we have configured Google Analytics to anonymise),
-            browser and device type, and the pages you visit on this site. It never sees your questionnaire answers,
-            scores or any young person's pseudonymous ID — those stay local to your browser as described above and are
-            never part of what analytics receives. As with adverts, the Pupil Voice tool is excluded from analytics
-            entirely, on every screen.
+            often — so we know what's worth improving. Analytics does not run by default: the first time you visit, a
+            cookie banner asks whether you're happy for it to run, and nothing is collected unless and until you choose
+            "Accept". If you choose "Reject" (or simply don't respond), no analytics script runs and no analytics
+            cookies are set. Once accepted, a script from Google runs in your browser and may use cookies or similar
+            technology to recognise repeat visits; it can see general technical details like your approximate location
+            (from your IP address, which we have configured Google Analytics to anonymise), browser and device type,
+            and the pages you visit on this site. It never sees your questionnaire answers, scores or any young
+            person's pseudonymous ID — those stay local to your browser as described above and are never part of what
+            analytics receives. As with adverts, the Pupil Voice tool is excluded from analytics entirely, on every
+            screen — you won't even see the cookie banner there.
           </p>
         </section>
 
         <section>
           <h2 className="font-display text-lg font-bold">Cookies</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            This site's own code doesn't set any cookies — there's no account or session to track. The third-party
-            services above (ads, analytics, and the Google Fonts used for the site's typefaces) may set their own; see
-            their respective privacy policies for details.
+            This site's own code doesn't set any cookies — there's no account or session to track. Aside from a single,
+            strictly-necessary entry in your browser's local storage that remembers whether you accepted or rejected
+            the cookie banner (so we don't ask again every visit), the third-party services above (ads, analytics, and
+            the Google Fonts used for the site's typefaces) are what may set cookies of their own — and, for analytics,
+            only after you accept. See their respective privacy policies for details.
           </p>
         </section>
 
@@ -96,8 +102,8 @@ export default function Privacy() {
           <p className="mt-2 text-sm text-muted-foreground">
             These questionnaires are designed to be completed by a parent, carer or professional about a child, using a
             pseudonymous ID rather than any identifying detail — except Pupil Voice, which is designed for a young
-            person to complete about themselves, and is kept free of ads, product suggestions and analytics tracking
-            for that reason.
+            person to complete about themselves, and is kept free of ads, product suggestions, the cookie banner and
+            analytics tracking for that reason.
           </p>
         </section>
 

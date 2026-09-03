@@ -9,6 +9,7 @@ import StudentVoiceTool from '@/tools/StudentVoiceTool';
 import MwmTool from '@/tools/MwmTool';
 import { AdsenseLoader } from '@/components/AdsenseLoader';
 import { AnalyticsLoader } from '@/components/AnalyticsLoader';
+import { CookieConsent } from '@/components/CookieConsent';
 import { Header } from '@/components/Header';
 
 /**
@@ -22,6 +23,7 @@ export default function App() {
           renders inside HashRouter alongside the routes it's gating. */}
       <AdsenseLoader />
       <AnalyticsLoader />
+      <CookieConsent />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
