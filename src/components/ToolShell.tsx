@@ -2,6 +2,9 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, Progress } from './ui';
 import { Footer } from './Footer';
+import { AdBanner } from './AdBanner';
+import { ADSENSE_SLOTS } from '@/lib/adConfig';
+import type { ToolId } from '@/lib/storage';
 
 /**
  * Shared chrome for every tool: pseudonym badge, step progress, save note and
@@ -18,6 +21,7 @@ export function ToolShell({
   onRestart,
   children,
   footer,
+  sideRails,
 }: {
   title: string;
   intro?: ReactNode;
@@ -28,9 +32,14 @@ export function ToolShell({
   onRestart: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  /** Pass a ToolId to show sticky vertical ad rails either side of this screen at xl+
+   *  widths (there's no room for them below that) — for long results/builder screens
+   *  that want ads beyond whatever <AdBanner> slots already sit inside `children`. */
+  sideRails?: ToolId;
 }) {
   const showProgress = typeof stepIndex === 'number' && typeof stepCount === 'number' && stepCount > 0;
-  return (
+
+  const content = (
     <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         {/* The logo lives in the shared header above (src/components/Header.tsx), so this
@@ -72,6 +81,20 @@ export function ToolShell({
       </div>
 
       <Footer />
+    </div>
+  );
+
+  if (!sideRails) return content;
+
+  return (
+    <div className="mx-auto flex w-full max-w-[1600px] justify-center gap-6 px-4">
+      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
+        <AdBanner toolId={sideRails} slot={ADSENSE_SLOTS.resultsBanner} orientation="vertical" />
+      </aside>
+      {content}
+      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
+        <AdBanner toolId={sideRails} slot={ADSENSE_SLOTS.resultsBanner} orientation="vertical" />
+      </aside>
     </div>
   );
 }

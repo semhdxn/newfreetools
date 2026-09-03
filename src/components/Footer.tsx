@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export function Footer() {
   return (
     <footer className="mx-auto mt-12 w-full max-w-4xl border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6">
@@ -12,6 +14,11 @@ export function Footer() {
         they can stay free to use. Ads and product suggestions are never shown on the Pupil Voice tool, which is
         completed directly by the young person.
       </p>
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
+        <Link className="underline hover:text-foreground" to="/privacy">Privacy Policy</Link>
+        <Link className="underline hover:text-foreground" to="/faq">FAQs</Link>
+        <span>© {new Date().getFullYear()} SEMH.co.uk</span>
+      </div>
     </footer>
   );
 }

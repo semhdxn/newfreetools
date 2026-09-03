@@ -19,17 +19,24 @@ function toolIdForPath(pathname: string): ToolId | null {
  * that base script runs on a page, completely independent of whether any
  * <AdBanner> slot is rendered. The per-tool `adsEnabledFor()` gate on
  * <AdBanner>/<AffiliateProducts> only stops OUR OWN manual ad slots; it does
- * nothing to stop Google's own auto-injected anchor ad, which is what was
- * showing up at the bottom of the ad-free Pupil Voice (student-voice) route.
- * Never loading the script there at all is the only client-side way to stop
- * it for a fresh page load on that route.
+ * nothing to stop Google's own auto-injected anchor/side-rail ads, which is
+ * what was showing up on the ad-free Pupil Voice (student-voice) route.
  *
- * Caveat: once loaded, the script is left in place for the rest of the SPA
- * session (removing it can't undo ads Google has already injected). A user
- * who reaches Pupil Voice by clicking through from an ad-enabled page in the
- * same session may still see a previously-injected anchor ad — for full
- * protection against that, also add /student-voice (or '/#/student-voice')
- * to this AdSense account's Auto ads > Site exclusion list.
+ * Not loading the script covers a visitor who lands directly on an
+ * ad-excluded route, but this is a client-side single-page app: React
+ * Router's HashRouter never does a full page reload when the visitor clicks
+ * from an ad-enabled page (Home, say) straight into Pupil Voice. If the
+ * AdSense script — and whatever Auto/Anchor ads it already injected — was
+ * loaded on that earlier page, it's still sitting in this same browser tab
+ * and there is no client-side way to un-inject those ads.
+ *
+ * So when the route becomes ad-excluded and the script is already present,
+ * this forces a genuine full-page reload. That tears down the entire page —
+ * script, injected ads and all — and starts the ad-excluded route completely
+ * fresh, where the script is never added in the first place. Any in-progress
+ * answers on that route are untouched: every tool session autosaves to
+ * localStorage (see useToolSession), so the reload lands the visitor back
+ * exactly where they were.
  */
 export function AdsenseLoader() {
   const { pathname } = useLocation();
@@ -38,8 +45,13 @@ export function AdsenseLoader() {
     if (!ADSENSE_CONFIGURED) return;
     const toolId = toolIdForPath(pathname);
     const allowed = toolId ? adsEnabledFor(toolId) : true; // no toolId (e.g. home page) is always ad-eligible
-    if (!allowed) return;
-    if (document.getElementById(SCRIPT_ID)) return;
+    const scriptAlreadyLoaded = Boolean(document.getElementById(SCRIPT_ID));
+
+    if (!allowed) {
+      if (scriptAlreadyLoaded) window.location.reload();
+      return;
+    }
+    if (scriptAlreadyLoaded) return;
 
     const script = document.createElement('script');
     script.id = SCRIPT_ID;

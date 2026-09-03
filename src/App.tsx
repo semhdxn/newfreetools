@@ -1,11 +1,14 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import Home from '@/pages/Home';
+import Privacy from '@/pages/Privacy';
+import Faq from '@/pages/Faq';
 import SensoryTool from '@/tools/SensoryTool';
 import BehaviourTool from '@/tools/BehaviourTool';
 import HomeBehaviourTool from '@/tools/HomeBehaviourTool';
 import StudentVoiceTool from '@/tools/StudentVoiceTool';
 import MwmTool from '@/tools/MwmTool';
 import { AdsenseLoader } from '@/components/AdsenseLoader';
+import { AnalyticsLoader } from '@/components/AnalyticsLoader';
 import { Header } from '@/components/Header';
 
 /**
@@ -18,9 +21,12 @@ export default function App() {
       {/* Needs router context (useLocation) to know which route it's on, so it
           renders inside HashRouter alongside the routes it's gating. */}
       <AdsenseLoader />
+      <AnalyticsLoader />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/faq" element={<Faq />} />
         <Route path="/sensory" element={<SensoryTool />} />
         <Route path="/behaviour" element={<BehaviourTool />} />
         <Route path="/home-behaviour" element={<HomeBehaviourTool />} />

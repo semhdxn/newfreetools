@@ -693,7 +693,7 @@ export default function SensoryTool() {
     const atCap = state.selectedAreas.length >= MAX_SELECTED_AREAS;
 
     return (
-      <ToolShell title="Sensory Suggester" childId={childId} onRestart={restart}>
+      <ToolShell title="Sensory Suggester" childId={childId} onRestart={restart} sideRails="sensory">
         <div className="max-w-4xl mx-auto space-y-6">
           <AffiliateDisclosureBanner toolId="sensory" />
 
@@ -850,6 +850,7 @@ export default function SensoryTool() {
             <Button variant="outline" onClick={openCircuit} className="min-w-[160px] flex-1">
               Build a Sensory Circuit
             </Button>
+            <PremiumLockButton label="Download high-quality PDF" className="min-w-[160px] flex-1" />
             <PremiumLockButton label="Download / save young person for future" className="min-w-[160px] flex-1" />
             <Button variant="outline" onClick={restart} className="min-w-[160px] flex-1">
               Start Over
@@ -954,7 +955,7 @@ export default function SensoryTool() {
     const activeDayLabel = CIRCUIT_DAYS.find((d) => d.key === activeCircuitDay)?.label ?? '';
 
     return (
-      <ToolShell title="Sensory Circuit" childId={childId} onRestart={restart}>
+      <ToolShell title="Sensory Circuit" childId={childId} onRestart={restart} sideRails="sensory">
         <div className="max-w-4xl mx-auto space-y-6">
           <button
             onClick={() => setState((prev) => ({ ...prev, step: 'results' }))}
@@ -1005,8 +1006,11 @@ export default function SensoryTool() {
                   <Download className="h-4 w-4 mr-2" />
                   Download CSV
                 </Button>
+                <PremiumLockButton label="Download high-quality PDF" />
               </div>
             </div>
+
+            <AdBanner toolId="sensory" slot={ADSENSE_SLOTS.resultsBanner} />
           </Card>
 
           {allowedStrategies.length > 0 && (

@@ -140,6 +140,7 @@ export default function HomeBehaviourTool() {
         </Card>
 
         <div className="flex flex-wrap gap-3">
+          <PremiumLockButton label="Download high-quality PDF" className="min-w-[160px] flex-1" />
           <PremiumLockButton label="Download / save young person for future" className="min-w-[160px] flex-1" />
           <Button
             variant="outline"
