@@ -333,7 +333,12 @@ export default function MwmTool() {
           {/* Custom Questions */}
           <Card>
             <div className="p-4 space-y-3">
-              <h3 className="font-medium text-sm">Add custom questions (optional)</h3>
+              <div>
+                <h3 className="font-medium text-sm mb-2">Add custom questions (optional)</h3>
+                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                  These will use the same 1–5 scale (Never to Always). Enter behavioural or developmental statements, not yes/no questions. For example: "Shows persistence when faced with difficulties" or "Communicates needs clearly to adults"
+                </p>
+              </div>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -377,8 +382,6 @@ export default function MwmTool() {
               )}
             </div>
           </Card>
-
-          <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.inputBanner} />
         </div>
       </ToolShell>
     );

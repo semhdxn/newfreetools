@@ -15,7 +15,8 @@
     "react-router-dom": "^7.18.2",
     "@fontsource/inter": "^5.0.8",
     "@fontsource/plus-jakarta-sans": "^5.0.6",
-    "lucide-react": "^0.294.0"
+    "lucide-react": "^0.294.0",
+    "html2pdf.js": "^0.10.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
