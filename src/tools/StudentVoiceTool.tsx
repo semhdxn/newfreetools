@@ -10,7 +10,7 @@ import {
 import { Footer } from '@/components/Footer';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
 import { useToolSession } from '@/lib/useToolSession';
-import { rowsToCsv, downloadCsv, todayStamp, type Row as CsvRow } from '@/lib/exportCsv';
+import { rowsToCsv, downloadCsv, todayStamp, withDataRow, type Row as CsvRow } from '@/lib/exportCsv';
 import {
   studentVoiceCategories,
   studentVoiceStatements,
@@ -284,7 +284,16 @@ export default function StudentVoiceTool() {
     studentVoiceStatements
       .filter((st) => (state.responses[st.id] ?? 0) >= NOTABLE_THRESHOLD)
       .forEach((st) => rows.push([st.text, st.category, freqLabel(state.responses[st.id])]));
-    downloadCsv(`pupil-voice-part1-${childId}-${todayStamp()}.csv`, rowsToCsv(rows));
+    const dataPayload = {
+      part: 1 as const,
+      childId,
+      completedOn: state.part1CompletedOn ?? todayStamp(),
+      // Raw responses, not the derived scores/notable list above — lets a
+      // backend importer recompute with whatever scoring logic it has,
+      // rather than trusting a snapshot of this version's derivation.
+      responses: state.responses,
+    };
+    downloadCsv(`pupil-voice-part1-${childId}-${todayStamp()}.csv`, rowsToCsv(withDataRow(rows, dataPayload)));
   };
 
   const exportPart2Csv = () => {
@@ -313,7 +322,15 @@ export default function StudentVoiceTool() {
       const counts = SCHOOL_DAY_FEELINGS.map((f) => arr.filter((x) => x === f.id).length);
       rows.push([stg.label, ...counts, arr.length]);
     });
-    downloadCsv(`pupil-voice-part2-${childId}-${todayStamp()}.csv`, rowsToCsv(rows));
+    const dataPayload = {
+      part: 2 as const,
+      childId,
+      completedOn: state.part2CompletedOn ?? todayStamp(),
+      envSort: state.envSort,
+      respSort: state.respSort,
+      schoolDayFeelings: state.schoolDayFeelings,
+    };
+    downloadCsv(`pupil-voice-part2-${childId}-${todayStamp()}.csv`, rowsToCsv(withDataRow(rows, dataPayload)));
   };
 
   const exportPart3Csv = () => {
@@ -331,7 +348,14 @@ export default function StudentVoiceTool() {
       if (safeIds.length === 0 && trickyIds.length === 0) return;
       rows.push([`${idx + 1}. ${layout.name}`, safeIds.join('; '), trickyIds.join('; ')]);
     });
-    downloadCsv(`pupil-voice-part3-${childId}-${todayStamp()}.csv`, rowsToCsv(rows));
+    const dataPayload = {
+      part: 3 as const,
+      childId,
+      completedOn: state.part3CompletedOn ?? todayStamp(),
+      floorplanSafe: state.floorplanSafe,
+      floorplanTricky: state.floorplanTricky,
+    };
+    downloadCsv(`pupil-voice-part3-${childId}-${todayStamp()}.csv`, rowsToCsv(withDataRow(rows, dataPayload)));
   };
 
   const exportPartCsv = (part: 1 | 2 | 3) => {
