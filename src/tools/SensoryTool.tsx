@@ -249,7 +249,7 @@ function StatementCard({
 }
 
 export default function SensoryTool() {
-  const { state, childId, setState, setCompleted, restart } = useToolSession<SensoryState>('sensory', {
+  const { session, state, childId, setState, setCompleted, restart } = useToolSession<SensoryState>('sensory', {
     selectedStatements: [],
     shownStatements: [],
     step: 'intro',
@@ -488,6 +488,15 @@ export default function SensoryTool() {
       ['Permission Confirmed', state.permissionConfirmed ? 'Yes' : 'No'],
     ];
 
+    // Same per-area percentages already shown on the results table, packaged
+    // for the premium backend's CsvAttachPicker summary badges.
+    const summary = results.map((r) => ({
+      label: r.area.label,
+      value: r.percentage,
+      max: 100,
+      flagged: r.percentage >= HIGHLIGHT_THRESHOLD,
+    }));
+
     const csv = buildToolCsv({
       toolName: 'Sensory Suggester',
       childId,
@@ -505,6 +514,7 @@ export default function SensoryTool() {
         { title: 'ALL RESPONSES', header: ['Sensory Area', 'Statement', 'Selected'], rows: detailRows },
         { title: 'CHOSEN STRATEGIES', header: ['Sensory Area', 'Strategy'], rows: strategyRows },
       ],
+      dataPayload: { ...session, summary },
     });
     downloadToolCsv('sensory-suggester', childId, csv);
     setCompleted(true);

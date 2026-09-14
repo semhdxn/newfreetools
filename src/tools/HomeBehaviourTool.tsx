@@ -41,7 +41,7 @@ interface HomeBehaviourState {
 const labelFor = (value: number) => FREQUENCY_OPTIONS.find((o) => o.value === value)?.label ?? '';
 
 export default function HomeBehaviourTool() {
-  const { state, childId, setState, setCompleted, restart } = useToolSession<HomeBehaviourState>('home-behaviour', {
+  const { session, state, childId, setState, setCompleted, restart } = useToolSession<HomeBehaviourState>('home-behaviour', {
     agreedToDisclaimer: false,
     permissionConfirmed: false,
     started: false,
@@ -89,6 +89,14 @@ export default function HomeBehaviourTool() {
     });
     const adviceRows: Row[] = relevant.map((c) => [c.label, c.advice]);
     const linkRows: Row[] = relevant.flatMap((c) => c.webLinks.map((l) => [c.label, l.label, l.url]));
+    // Same per-category averages already shown on the results bars, packaged
+    // for the premium backend's CsvAttachPicker summary badges.
+    const summary = homeBehaviourCategories.map((c) => ({
+      label: c.label,
+      value: scores[c.id],
+      max: 5,
+      flagged: scores[c.id] >= RELEVANCE_THRESHOLD,
+    }));
     const csv = buildToolCsv({
       toolName: 'Home Behaviour',
       childId,
@@ -100,6 +108,7 @@ export default function HomeBehaviourTool() {
         { title: 'ADVICE (relevant categories)', header: ['Category', 'Advice'], rows: adviceRows },
         { title: 'USEFUL LINKS', header: ['Category', 'Link', 'URL'], rows: linkRows },
       ],
+      dataPayload: { ...session, summary },
     });
     downloadToolCsv('home-behaviour', childId, csv);
   };

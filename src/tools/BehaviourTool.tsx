@@ -66,7 +66,7 @@ function initialState(): BehaviourState {
 }
 
 export default function BehaviourTool() {
-  const { state, childId, setState, setCompleted, restart } = useToolSession<BehaviourState>(
+  const { session, state, childId, setState, setCompleted, restart } = useToolSession<BehaviourState>(
     'behaviour',
     initialState(),
   );
@@ -277,6 +277,14 @@ export default function BehaviourTool() {
       highlightedFunctions.forEach((f) => {
         getStrategiesForFunction(f.id).forEach((s) => strategyRows.push([f.label, s.text]));
       });
+      // Same function scores already shown on the results bars, packaged for
+      // the premium backend's CsvAttachPicker summary badges.
+      const summary = sortedFunctions.map((f) => ({
+        label: f.label,
+        value: scores[f.id] || 0,
+        max: 100,
+        flagged: highlightedFunctions.some((hf) => hf.id === f.id),
+      }));
       const csv = buildToolCsv({
         toolName: 'Behaviour Indicator',
         childId,
@@ -295,6 +303,7 @@ export default function BehaviourTool() {
             rows: strategyRows,
           },
         ],
+        dataPayload: { ...session, summary },
       });
       downloadToolCsv('behaviour', childId, csv);
     };

@@ -1,4 +1,4 @@
-import { downloadCsv, rowsToCsv, todayStamp } from './exportCsv';
+import { downloadCsv, rowsToCsv, todayStamp, withDataRow } from './exportCsv';
 
 export type Row = Array<string | number | null | undefined>;
 
@@ -15,6 +15,14 @@ export function buildToolCsv(opts: {
   detailHeader: Row;
   detailRows: Row[];
   extraBlocks?: { title: string; header: Row; rows: Row[] }[];
+  /**
+   * When present, a hidden machine-readable row (see exportCsv's
+   * DATA_ROW_MARKER/withDataRow) is appended so the premium toolkit's
+   * CsvAttachPicker can round-trip this export straight into a young
+   * person's record. Should carry the underlying tool state, not a
+   * re-derivation of the display rows above it.
+   */
+  dataPayload?: unknown;
 }): string {
   const rows: Row[] = [
     ['SEMH Free Tools export'],
@@ -34,7 +42,7 @@ export function buildToolCsv(opts: {
     if (block.rows.length === 0) continue;
     rows.push([], [block.title], block.header, ...block.rows);
   }
-  return rowsToCsv(rows);
+  return rowsToCsv(opts.dataPayload !== undefined ? withDataRow(rows, opts.dataPayload) : rows);
 }
 
 export function downloadToolCsv(toolSlug: string, childId: string, csv: string): void {
