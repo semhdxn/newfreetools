@@ -75,7 +75,7 @@ function createPdfContent(questionnaire: QuestionnaireForPdf): HTMLElement {
     text-transform: uppercase;
     margin-bottom: 16px;
   `;
-  subtitleDiv.textContent = 'Assessment Questionnaire';
+  subtitleDiv.textContent = 'Questionnaire';
   container.appendChild(subtitleDiv);
 
   if (description) {
@@ -315,9 +315,11 @@ export function downloadPdf(questionnaire: QuestionnaireForPdf): void {
   const filename = `MWM-${questionnaire.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
 
   const options = {
-    margin: [10, 10, 10, 10],
+    // html2pdf.js 0.14.0's stricter types need these narrowed explicitly —
+    // a plain number[]/string literal no longer narrows automatically.
+    margin: [10, 10, 10, 10] as [number, number, number, number],
     filename: filename,
-    image: { type: 'jpeg', quality: 0.98 },
+    image: { type: 'jpeg' as const, quality: 0.98 },
     html2canvas: { scale: 2, logging: false },
     jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' } as const,
   };

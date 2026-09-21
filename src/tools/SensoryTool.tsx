@@ -579,7 +579,7 @@ export default function SensoryTool() {
                 disabled={!canProceed}
                 className="w-full"
               >
-                Start Assessment
+                Start Questionnaire
               </Button>
             </div>
           </Card>
@@ -664,7 +664,7 @@ export default function SensoryTool() {
           <Card className="bg-card">
             <div className="p-6 space-y-4">
               <h2 className="text-2xl font-bold text-foreground">Halfway Summary</h2>
-              <p className="text-muted-foreground">You've completed the first half of the assessment.</p>
+              <p className="text-muted-foreground">You've completed the first half of the questionnaire.</p>
 
               <div className="bg-secondary/50 p-4 rounded-lg space-y-2">
                 <p className="font-semibold text-foreground">Current percentages:</p>
@@ -994,7 +994,7 @@ export default function SensoryTool() {
                 {highlightedAreas.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No sensory area scored {HIGHLIGHT_THRESHOLD}% or higher, so there's nothing evidence-linked to
-                    build a circuit from yet — try selecting different statements or revisiting the assessment.
+                    build a circuit from yet — try selecting different statements or revisiting the questionnaire.
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
