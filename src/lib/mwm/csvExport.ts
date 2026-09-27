@@ -10,8 +10,15 @@ const SCALE_LABELS: Record<number, string> = {
   5: '5 — Always',
 };
 
+// 27 Sept 2026 — same CSV/spreadsheet formula injection guard as
+// lib/exportCsv.ts's rowsToCsv (see its comment for the full rationale).
+// This is a separate, older CSV builder specific to MWM, not built on top
+// of exportCsv.ts, so it needs the same fix applied here independently.
+const FORMULA_PREFIX_RE = /^[=+\-@\t\r]/;
+
 function escapeCsv(value: string | null | undefined): string {
-  const str = value ?? '';
+  let str = value ?? '';
+  if (FORMULA_PREFIX_RE.test(str)) str = `'${str}`;
   if (str.includes('"') || str.includes(',') || str.includes('\n')) {
     return `"${str.replace(/"/g, '""')}"`;
   }

@@ -10,10 +10,23 @@
 /** One CSV row: an array of cells, each coerced to a string on export. */
 export type Row = Array<string | number | null | undefined>;
 
+// 27 Sept 2026 — CSV/spreadsheet formula injection guard. Every cell here can
+// be free text someone typed (an answer, a locally-generated pseudonym the
+// user edited by hand), and Excel/Google Sheets treat a cell starting with
+// =, +, -, @, a tab or a carriage return as a formula to run when the file
+// is opened — the classic CSV-injection vector. The standard mitigation
+// (OWASP): prefix such a cell with a leading apostrophe, which every
+// spreadsheet app reads as "force this to be text" and which doesn't change
+// how the value round-trips back through the backend's CSV importer (it
+// only ever reads the separate machine-readable data row below, never these
+// human-readable cells).
+const FORMULA_PREFIX_RE = /^[=+\-@\t\r]/;
+
 export function rowsToCsv(rows: Row[]): string {
   const escape = (v: unknown): string => {
     if (v === null || v === undefined) return '';
-    const s = String(v);
+    let s = String(v);
+    if (FORMULA_PREFIX_RE.test(s)) s = `'${s}`;
     return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return rows.map(r => r.map(escape).join(',')).join('\r\n');
