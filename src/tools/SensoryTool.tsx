@@ -488,14 +488,12 @@ export default function SensoryTool() {
       ['Permission Confirmed', state.permissionConfirmed ? 'Yes' : 'No'],
     ];
 
-    // Same per-area percentages already shown on the results table, packaged
-    // for the premium backend's CsvAttachPicker summary badges.
-    const summary = results.map((r) => ({
-      label: r.area.label,
-      value: r.percentage,
-      max: 100,
-      flagged: r.percentage >= HIGHLIGHT_THRESHOLD,
-    }));
+    // Same shape PremSemhTools saves for a Sensory assessment (only the areas
+    // that cleared HIGHLIGHT_THRESHOLD, each flagged), so an imported record's
+    // summary badges match a directly-saved one.
+    const summary = results
+      .filter((r) => r.percentage >= HIGHLIGHT_THRESHOLD)
+      .map((r) => ({ label: r.area.label, value: r.percentage, max: 100, flagged: true }));
 
     const csv = buildToolCsv({
       toolName: 'Sensory Suggester',

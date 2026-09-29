@@ -285,6 +285,8 @@ export default function StudentVoiceTool() {
       .filter((st) => (state.responses[st.id] ?? 0) >= NOTABLE_THRESHOLD)
       .forEach((st) => rows.push([st.text, st.category, freqLabel(state.responses[st.id])]));
     const dataPayload = {
+      // toolId: the premium CSV Upload Inbox identifies the tool from this field.
+      toolId: 'student-voice' as const,
       part: 1 as const,
       childId,
       completedOn: state.part1CompletedOn ?? todayStamp(),
@@ -323,6 +325,8 @@ export default function StudentVoiceTool() {
       rows.push([stg.label, ...counts, arr.length]);
     });
     const dataPayload = {
+      // toolId: the premium CSV Upload Inbox identifies the tool from this field.
+      toolId: 'student-voice' as const,
       part: 2 as const,
       childId,
       completedOn: state.part2CompletedOn ?? todayStamp(),
@@ -349,6 +353,8 @@ export default function StudentVoiceTool() {
       rows.push([`${idx + 1}. ${layout.name}`, safeIds.join('; '), trickyIds.join('; ')]);
     });
     const dataPayload = {
+      // toolId: the premium CSV Upload Inbox identifies the tool from this field.
+      toolId: 'student-voice' as const,
       part: 3 as const,
       childId,
       completedOn: state.part3CompletedOn ?? todayStamp(),
