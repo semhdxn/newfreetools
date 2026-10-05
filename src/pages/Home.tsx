@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Play, RotateCcw, Sparkles } from 'lucide-react';
 import { Button, Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
 import { AdBanner } from '@/components/AdBanner';
@@ -18,6 +18,17 @@ const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
 /** A distinct pastel accent per tool card — complementary pairings around the
  *  brand's pink/red primary (~354° hue), kept light enough that the existing
  *  dark foreground/muted-foreground text stays fully readable on top. */
+const PREMIUM_URL = 'https://toolkit.semh.co.uk';
+
+const PREMIUM_FEATURES = [
+  'Save results securely and build a record for each young person (up to 50 young people and 250 assessments)',
+  'Professional PDF reports to share with colleagues, parents and carers',
+  'Compare up to 5 results over time to see progress',
+  'Gentle email reminder 6 weeks after an assessment, so reviews don\'t get missed',
+  'Bring in a parent\'s or pupil\'s CSV from these free tools and attach it to a record',
+  'Fuller strategy libraries, completely ad-free',
+];
+
 const TOOL_ACCENTS: Record<ToolId, { bg: string; border: string }> = {
   sensory: { bg: 'hsl(200 70% 95%)', border: 'hsl(200 55% 80%)' },
   behaviour: { bg: 'hsl(30 75% 94%)', border: 'hsl(30 60% 80%)' },
@@ -133,6 +144,43 @@ export default function Home() {
           })}
         </div>
 
+        <section className="mt-10 overflow-hidden rounded-2xl border border-primary/30 bg-primary/5">
+          <div className="p-6 sm:p-8">
+            <p className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              SEMH Toolkit Premium
+            </p>
+            <h2 className="mt-3 font-display text-2xl font-extrabold sm:text-3xl">Ready to go beyond a one-off check?</h2>
+            <p className="mt-2 max-w-2xl text-muted-foreground">
+              The free tools are a great starting point. The full SEMH Toolkit lets you keep records, track progress over time and
+              produce reports you can share, all in one place.
+            </p>
+
+            <ul className="mt-5 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              {PREMIUM_FEATURES.map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <a href={PREMIUM_URL} className="sm:w-auto">
+                <Button variant="accent" size="lg" className="w-full sm:w-auto">
+                  Explore the full toolkit
+                  <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Button>
+              </a>
+              <p className="text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">&pound;9.99/month</span> or{' '}
+                <span className="font-semibold text-foreground">&pound;100/year</span> (about two months free). Organisation plans
+                available for schools and settings.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {sessions.length > 0 && (
           <div className="mt-10 border-t border-border pt-6">
             <Button
@@ -151,7 +199,7 @@ export default function Home() {
 
         <p className="mt-10 text-xs text-muted-foreground">
           These tools are for reflection and planning. They are not a diagnostic assessment and do not replace advice from a
-          qualified professional. See <Link className="underline" to="/">the full SEMH Toolkit</Link> for saved records and reports.
+          qualified professional. See <a className="underline" href={PREMIUM_URL}>the full SEMH Toolkit</a> for saved records and reports.
         </p>
 
         <Footer />
