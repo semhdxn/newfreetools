@@ -26,7 +26,7 @@ const PREMIUM_FEATURES = [
   'Compare up to 5 results over time to see progress',
   'Gentle email reminder 6 weeks after an assessment, so reviews don\'t get missed',
   'Bring in a parent\'s or pupil\'s CSV from these free tools and attach it to a record',
-  'Fuller strategy libraries, completely ad-free',
+  'A completely ad-free experience',
 ];
 
 const TOOL_ACCENTS: Record<ToolId, { bg: string; border: string }> = {
@@ -72,8 +72,8 @@ export default function Home() {
         <div className="mt-4 flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
           <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
           <p>
-            These are free, basic versions of the tools in the full SEMH Toolkit (premium) — saved records, richer reports and
-            fuller strategy libraries live there. Adverts and sponsored products on this site help cover the cost of developing
+            These are free, basic versions of the tools in the full SEMH Toolkit (premium) — saved records and richer reports
+            live there. Adverts and sponsored products on this site help cover the cost of developing
             and running these free tools, so they can stay free to use.
           </p>
         </div>
