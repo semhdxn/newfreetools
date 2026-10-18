@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { PREMIUM_URL } from '@/lib/links';
 
 export function Footer() {
   return (
@@ -9,7 +10,8 @@ export function Footer() {
         tools. Products are suggestions only, not a recommendation or endorsement of any specific brand.
       </p>
       <p className="mt-2">
-        These tools are a free, basic version of the full SEMH Toolkit (premium). Adverts and sponsored products
+        These tools are a free, basic version of the{' '}
+        <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit (premium)</a>. Adverts and sponsored products
         (Google AdSense and affiliate links) help cover the cost of developing and running these free resources, so
         they can stay free to use. Ads and product suggestions are never shown on the Pupil Voice tool, which is
         completed directly by the young person.

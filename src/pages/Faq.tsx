@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
+import { PREMIUM_URL } from '@/lib/links';
 
-const FAQS: { q: string; a: string }[] = [
+const FAQS: { q: string; a: ReactNode }[] = [
   {
     q: 'What is this site?',
     a: 'Five free, standalone SEMH (Social, Emotional and Mental Health) questionnaires — Sensory, Behaviour, Home Behaviour, Pupil Voice and Measure What Matters. Each one runs entirely in your browser and ends with a CSV download of your results.',
@@ -49,7 +51,12 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'How do I get in touch?',
-    a: 'This free tools site doesn’t have its own contact form. For questions, including about the full SEMH Toolkit, visit semh.co.uk.',
+    a: (
+      <>
+        This free tools site doesn’t have its own contact form. For questions, including about the full SEMH Toolkit,
+        visit <a className="underline" href={PREMIUM_URL}>toolkit.semh.co.uk</a>.
+      </>
+    ),
   },
 ];
 

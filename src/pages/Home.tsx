@@ -5,6 +5,7 @@ import { Button, Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
 import { AdBanner } from '@/components/AdBanner';
 import { ADSENSE_SLOTS } from '@/lib/adConfig';
+import { PREMIUM_URL } from '@/lib/links';
 import { TOOL_LABELS, clearAllSessions, clearSession, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
 
 const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
@@ -18,8 +19,6 @@ const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
 /** A distinct pastel accent per tool card — complementary pairings around the
  *  brand's pink/red primary (~354° hue), kept light enough that the existing
  *  dark foreground/muted-foreground text stays fully readable on top. */
-const PREMIUM_URL = 'https://toolkit.semh.co.uk';
-
 const PREMIUM_FEATURES = [
   'Save results securely and build a record for each young person (up to 50 young people and 250 assessments)',
   'Professional PDF reports to share with colleagues, parents and carers',

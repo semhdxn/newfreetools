@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Lock, X } from 'lucide-react';
 import { Button, Card } from '@/components/ui';
+import { PREMIUM_URL } from '@/lib/links';
 
 /**
  * A visible-but-locked action (e.g. "Save young person for future") that
@@ -55,6 +56,11 @@ export function PremiumLockButton({
               tools keep everything on-device only, with no accounts and no saved records, so this stays a premium
               feature for now.
             </p>
+            <div className="p-2">
+              <a href={PREMIUM_URL}>
+                <Button variant="accent" className="w-full">Explore the full SEMH Toolkit</Button>
+              </a>
+            </div>
           </Card>
         </div>
       )}

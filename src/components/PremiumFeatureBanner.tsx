@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react';
+import { PREMIUM_URL } from '@/lib/links';
 
 export function PremiumFeatureBanner() {
   return (
@@ -7,7 +8,8 @@ export function PremiumFeatureBanner() {
       <div>
         <p className="font-semibold text-sm text-yellow-900">Premium feature—temporarily available</p>
         <p className="text-xs text-yellow-800 mt-1">
-          This feature is part of our premium toolkit during our rebuild phase and will be available for a limited time.
+          This feature is part of our premium toolkit during our rebuild phase and will be available for a limited time.{' '}
+          <a className="underline" href={PREMIUM_URL}>Explore the full toolkit</a>.
         </p>
       </div>
     </div>

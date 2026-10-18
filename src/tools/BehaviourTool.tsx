@@ -8,6 +8,7 @@ import { adsEnabledFor, ADSENSE_SLOTS } from '@/lib/adConfig';
 import { AdBanner } from '@/components/AdBanner';
 import { InterstitialGate } from '@/components/InterstitialGate';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
+import { PREMIUM_URL } from '@/lib/links';
 import {
   Cohort,
   behaviourFunctions,
@@ -126,7 +127,8 @@ export default function BehaviourTool() {
         <div className="flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
           <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
           <p>
-            This is a free, basic version of the Behaviour Indicator in the full SEMH Toolkit (premium). The premium
+            This is a free, basic version of the Behaviour Indicator in the{' '}
+            <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit (premium)</a>. The premium
             version includes a fuller strategy library, saved records and richer reports.
           </p>
         </div>
@@ -313,7 +315,8 @@ export default function BehaviourTool() {
         <div className="flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
           <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
           <p>
-            This is a free, basic version of the Behaviour Indicator in the full SEMH Toolkit (premium). The premium
+            This is a free, basic version of the Behaviour Indicator in the{' '}
+            <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit (premium)</a>. The premium
             version includes a fuller strategy library, saved records and richer reports.
           </p>
         </div>
