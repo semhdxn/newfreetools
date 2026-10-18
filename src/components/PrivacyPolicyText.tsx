@@ -30,7 +30,7 @@ export function PrivacyPolicyContent() {
       <section>
         <h3 className="font-semibold text-foreground mb-2">Data Collection</h3>
         <p>
-          These free tools run entirely in your browser. Your answers are stored only in your browser's local storage and are never sent to any server.
+          These free tools run entirely in your browser. Your answers are stored only in your browser's local storage and are never sent to any server. The exception is the Chronology Builder, which saves nothing at all.
         </p>
       </section>
 

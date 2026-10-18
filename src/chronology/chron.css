@@ -1,0 +1,71 @@
+/* Chronology Builder styles, scoped under .chron so nothing leaks into the other tools.
+   Colours the host Tailwind tokens don't cover are defined here. The host's own
+   tokens (card, primary, muted ...) are HSL channel triplets, so wrap them in hsl(). */
+.chron {
+  --notice: 354 60% 96%;
+  --notice-foreground: 354 60% 28%;
+  --warning: 35 85% 40%;
+  --overlay: 220 25% 12%;
+  --cat-living: oklch(0.55 0.11 220);
+  --cat-education: oklch(0.62 0.14 65);
+  --cat-health: oklch(0.55 0.17 15);
+  --cat-family: oklch(0.55 0.12 150);
+  --cat-services: oklch(0.48 0.12 280);
+  --cat-significant: oklch(0.45 0.03 260);
+  --band-a: oklch(0.97 0.008 50);
+  --band-b: oklch(0.96 0.015 15);
+  --path: oklch(0.92 0.012 50);
+  --wellbeing-positive: oklch(0.43 0.12 155);
+  --wellbeing-negative: oklch(0.46 0.15 25);
+  --wellbeing-neutral: oklch(0.42 0.04 250);
+  --wellbeing-amber: oklch(0.72 0.15 75);
+  --wellbeing-mixed: oklch(0.45 0.12 305);
+  --shadow-badge: 0 0 0 4px hsl(0 0% 100% / 0.7), 0 2px 8px hsl(220 20% 15% / 0.25);
+}
+.chron h1, .chron h2, .chron h3, .chron h4 { font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif; }
+
+.chron .wellbeing-symbol { color: hsl(var(--muted-foreground)); }
+.chron .wellbeing-symbol[data-tone="positive"] { color: var(--wellbeing-positive); }
+.chron .wellbeing-symbol[data-tone="negative"] { color: var(--wellbeing-negative); }
+.chron .wellbeing-symbol[data-tone="neutral"] { color: var(--wellbeing-neutral); }
+.chron .wellbeing-symbol[data-tone="mixed"] { color: var(--wellbeing-mixed); }
+
+.chron .btn {
+  display: inline-flex; min-height: 2.25rem; align-items: center; justify-content: center; gap: 0.375rem;
+  border-radius: 0.5rem; border: 1px solid hsl(var(--input)); background: hsl(var(--card));
+  padding: 0.375rem 0.875rem; font-size: 0.875rem; font-weight: 500; color: hsl(var(--foreground));
+  transition: background-color .15s;
+}
+.chron .btn:hover { background: hsl(var(--secondary)); }
+.chron .btn:disabled { opacity: .5; pointer-events: none; }
+.chron .btn-primary { border-color: hsl(var(--accent)); background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.chron .btn-primary:hover { background: hsl(var(--primary)); border-color: hsl(var(--primary)); }
+.chron .btn-danger { border-color: hsl(var(--destructive) / .4); color: hsl(var(--destructive)); }
+.chron .btn-danger:hover { background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground)); }
+.chron .field {
+  height: 2.5rem; width: 100%; border-radius: 0.5rem; border: 1px solid hsl(var(--input));
+  background: hsl(var(--card)); padding: 0.375rem 0.75rem; font-size: 0.875rem; color: hsl(var(--foreground)); outline: none;
+}
+.chron .field:focus { box-shadow: 0 0 0 2px hsl(var(--ring)); }
+.chron textarea.field { height: auto; }
+.chron .label { margin-bottom: 0.25rem; display: block; font-size: 0.75rem; font-weight: 600; color: hsl(var(--muted-foreground)); }
+.chron .panel {
+  border-radius: 0.75rem; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); padding: 1rem;
+  box-shadow: 0 1px 3px 0 hsl(20 10% 60% / .25), 0 1px 2px -1px hsl(20 10% 60% / .2);
+}
+@media (min-width: 640px) { .chron .panel { padding: 1.25rem; } }
+
+@keyframes chron-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes chron-fade-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
+.chron .fade-in { animation: chron-fade-in .3s ease-out both; }
+.chron .fade-out { animation: chron-fade-out .3s ease-in both; }
+
+.chron .wb-focus { outline: 3px solid hsl(var(--primary)); outline-offset: 2px; border-radius: 6px; z-index: 30; animation: chron-wb-pulse .9s ease-in-out 3; }
+@keyframes chron-wb-pulse { 50% { outline-color: transparent; } }
+
+@media print {
+  body:has(.chron) * { visibility: hidden; }
+  body:has(.chron) .print-sheet, body:has(.chron) .print-sheet * { visibility: visible; }
+  body:has(.chron) .print-sheet { position: absolute; left: 0; top: 0; zoom: var(--print-scale, 1); }
+  .chron .no-print { display: none !important; }
+}

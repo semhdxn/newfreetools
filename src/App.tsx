@@ -7,6 +7,7 @@ import BehaviourTool from '@/tools/BehaviourTool';
 import HomeBehaviourTool from '@/tools/HomeBehaviourTool';
 import StudentVoiceTool from '@/tools/StudentVoiceTool';
 import MwmTool from '@/tools/MwmTool';
+import ChronologyTool from '@/tools/ChronologyTool';
 import { AdsenseLoader } from '@/components/AdsenseLoader';
 import { AnalyticsLoader } from '@/components/AnalyticsLoader';
 import { CookieConsent } from '@/components/CookieConsent';
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/home-behaviour" element={<HomeBehaviourTool />} />
         <Route path="/student-voice" element={<StudentVoiceTool />} />
         <Route path="/mwm" element={<MwmTool />} />
+        <Route path="/chronology" element={<ChronologyTool />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </HashRouter>

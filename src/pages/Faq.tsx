@@ -7,7 +7,7 @@ import { PREMIUM_URL } from '@/lib/links';
 const FAQS: { q: string; a: ReactNode }[] = [
   {
     q: 'What is this site?',
-    a: 'Five free, standalone SEMH (Social, Emotional and Mental Health) questionnaires — Sensory, Behaviour, Home Behaviour, Pupil Voice and Measure What Matters. Each one runs entirely in your browser and ends with a CSV download of your results.',
+    a: 'Five free, standalone SEMH (Social, Emotional and Mental Health) questionnaires — Sensory, Behaviour, Home Behaviour, Pupil Voice and Measure What Matters — plus a Chronology Builder. Each one runs entirely in your browser. The questionnaires end with a CSV download of your results.',
   },
   {
     q: 'Do I need to create an account?',
@@ -15,19 +15,33 @@ const FAQS: { q: string; a: ReactNode }[] = [
   },
   {
     q: "Is my child's information safe?",
-    a: "Yes — none of it is ever sent anywhere. Every questionnaire is calculated in your own browser and saved only to that browser's local storage, tagged with a randomly generated ID (like brave-otter-42) rather than a name. See the full Privacy Policy for details.",
+    a: "Yes — none of it is ever sent anywhere. Every questionnaire is calculated in your own browser and saved only to that browser's local storage, tagged with a randomly generated ID (like brave-otter-42) rather than a name. The one exception is the Chronology Builder, which saves nothing at all, not even in your browser. See the full Privacy Policy for details.",
   },
   {
     q: 'What happens if I clear my browser data or switch devices?',
-    a: "You'll lose anything saved on this site — in-progress or completed questionnaires — since it only ever existed in that one browser. Download the CSV for anything you want to keep before doing either.",
+    a: "You'll lose anything saved on this site — in-progress or completed questionnaires — since it only ever existed in that one browser. Download the CSV for anything you want to keep before doing either. The Chronology Builder never saves anything, so closing or refreshing its tab clears it straight away; use Export CSV first.",
   },
   {
     q: 'How do I keep a copy of my results?',
     a: 'Download the CSV at the end of each questionnaire. It saves straight to your device and is yours to keep, print or share as you choose.',
   },
   {
+    q: 'Will the Chronology Builder stay free?',
+    a: (
+      <>
+        It is temporarily available on this site while we test it. It will become part of the premium SEMH Toolkit at{' '}
+        <a className="underline" href={PREMIUM_URL}>toolkit.semh.co.uk</a> and will then be removed from this free site, so export a CSV of any
+        chronology you want to keep.
+      </>
+    ),
+  },
+  {
+    q: 'What is different about the Chronology Builder?',
+    a: "It keeps everything in memory only, with no autosave, so nothing is stored in your browser either. Use Export CSV to keep your work and Import CSV to bring it back. It also has no adverts, analytics or cookie banner, and it can produce a one-page PDF, PNG and an offline HTML file. Please use initials or a reference, not a full name.",
+  },
+  {
     q: 'Can I get a PDF report instead of a CSV?',
-    a: "Not on this free site — a formatted PDF report is a feature of the full, paid SEMH Toolkit. You'll see a \"Download PDF\" button on most results pages that explains this rather than actually producing a PDF.",
+    a: "Not for the questionnaires — a formatted PDF report is a feature of the full, paid SEMH Toolkit (the Chronology Builder is the exception and makes its own one-page PDF). You'll see a \"Download PDF\" button on most results pages that explains this rather than actually producing a PDF.",
   },
   {
     q: 'How is this different from the full SEMH Toolkit?',
@@ -39,7 +53,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'Is Pupil Voice different from the others?',
-    a: "Yes. It's designed for a young person to complete about themselves, so it's kept completely free of adverts and product suggestions on every screen — nothing is monetised there.",
+    a: "Yes. It's designed for a young person to complete about themselves, so it's kept completely free of adverts and product suggestions on every screen — nothing is monetised there. The Chronology Builder is ad-free too.",
   },
   {
     q: 'Are these tools a diagnosis?',
@@ -47,7 +61,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'Who are these tools for?',
-    a: 'Parents, carers, teachers, SENCOs and other professionals supporting a child — plus Pupil Voice, which is for the young person themselves.',
+    a: 'Parents, carers, teachers, SENCOs and other professionals supporting a child — plus Pupil Voice, which is for the young person themselves, and the Chronology Builder for practitioners.',
   },
   {
     q: 'How do I get in touch?',

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { GA_CONFIGURED, GA_MEASUREMENT_ID, getStoredConsent, trackingEnabledFor } from '@/lib/analytics';
+import { isChronologyPath } from '@/lib/links';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
 
 const SCRIPT_ID = 'ga4-script';
@@ -35,7 +36,7 @@ export function AnalyticsLoader() {
   useEffect(() => {
     if (!GA_CONFIGURED) return;
     const toolId = toolIdForPath(pathname);
-    const allowed = toolId ? trackingEnabledFor(toolId) : true; // no toolId (e.g. home page) is always trackable
+    const allowed = isChronologyPath(pathname) ? false : toolId ? trackingEnabledFor(toolId) : true; // no toolId (e.g. home page) is always trackable
     const scriptAlreadyLoaded = Boolean(document.getElementById(SCRIPT_ID));
 
     if (!allowed) {

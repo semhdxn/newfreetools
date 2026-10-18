@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ADSENSE_CLIENT_ID, ADSENSE_CONFIGURED, adsEnabledFor } from '@/lib/adConfig';
+import { isChronologyPath } from '@/lib/links';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
 
 const SCRIPT_ID = 'adsbygoogle-script';
@@ -44,7 +45,7 @@ export function AdsenseLoader() {
   useEffect(() => {
     if (!ADSENSE_CONFIGURED) return;
     const toolId = toolIdForPath(pathname);
-    const allowed = toolId ? adsEnabledFor(toolId) : true; // no toolId (e.g. home page) is always ad-eligible
+    const allowed = isChronologyPath(pathname) ? false : toolId ? adsEnabledFor(toolId) : true; // no toolId (e.g. home page) is always ad-eligible
     const scriptAlreadyLoaded = Boolean(document.getElementById(SCRIPT_ID));
 
     if (!allowed) {

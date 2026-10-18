@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { Button } from './ui';
 import { GA_CONFIGURED, getStoredConsent, setStoredConsent, trackingEnabledFor } from '@/lib/analytics';
+import { isChronologyPath } from '@/lib/links';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
 
 function toolIdForPath(pathname: string): ToolId | null {
@@ -23,7 +24,7 @@ export function CookieConsent() {
   const toolId = toolIdForPath(pathname);
   // No point asking for consent on a route that's never tracked (Pupil Voice),
   // or when analytics isn't even configured yet.
-  const relevant = GA_CONFIGURED && (toolId ? trackingEnabledFor(toolId) : true);
+  const relevant = GA_CONFIGURED && !isChronologyPath(pathname) && (toolId ? trackingEnabledFor(toolId) : true);
 
   useEffect(() => {
     if (!relevant) {

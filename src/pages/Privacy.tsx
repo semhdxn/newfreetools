@@ -11,7 +11,7 @@ export default function Privacy() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
       <h1 className="font-display text-3xl font-extrabold sm:text-4xl">Privacy Policy</h1>
-      <p className="mt-2 text-sm text-muted-foreground">For the SEMH Free Tools site only — last updated September 2026.</p>
+      <p className="mt-2 text-sm text-muted-foreground">For the SEMH Free Tools site only — last updated October 2026.</p>
 
       <Card className="mt-6 space-y-3">
         <h2 className="font-display text-base font-bold">The short version</h2>
@@ -21,6 +21,10 @@ export default function Privacy() {
           or email a CSV yourself. We don't collect, see or store any of it. We only use Google Analytics to see overall,
           anonymised site usage if you accept the cookie banner (see "Analytics" below) — it never runs on Pupil Voice,
           it's off by default until you accept, and it never sees your actual answers.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          The <strong>Chronology Builder</strong> is the one exception to the “saved in your browser” wording on this page: it
+          saves nothing at all, not even in your browser (see below). It is also only temporarily available here while it is tested, before it moves into the premium SEMH Toolkit.
         </p>
       </Card>
 
@@ -38,7 +42,7 @@ export default function Privacy() {
         <section>
           <h2 className="font-display text-lg font-bold">Where your answers actually live</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Each questionnaire autosaves to your browser's local storage, tagged only with a randomly generated,
+            Each of the five questionnaires (everything except the Chronology Builder) autosaves to your browser's local storage, tagged only with a randomly generated,
             meaningless ID such as <span className="font-mono">brave-otter-42</span> — never a child's name, initials or
             any other identifying detail (the tools explicitly ask you not to enter any). That data stays on your device
             and in that specific browser. Clearing your browser data, using a private/incognito window, or opening the
@@ -48,9 +52,22 @@ export default function Privacy() {
         </section>
 
         <section>
+          <h2 className="font-display text-lg font-bold">The Chronology Builder: nothing is saved</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            The Chronology Builder works differently from the questionnaires. Because a chronology can include sensitive
+            history and a date of birth, it keeps everything in memory only: nothing is saved to local storage, session
+            storage, cookies or anywhere else, and nothing is sent to us or anyone else. Closing or refreshing the tab clears
+            it, and the tool warns you first if you have changes you haven't exported. The only way to keep your work is the
+            CSV (or PNG, PDF or HTML file) you choose to download, which is created in your browser and saved straight to your
+            device. The Chronology Builder is kept free of adverts, affiliate links, analytics and the cookie banner, and none of
+            your entries are ever sent anywhere. Please use initials or a reference rather than a full name.
+          </p>
+        </section>
+
+        <section>
           <h2 className="font-display text-lg font-bold">Downloads</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            When you download a CSV of your results, the file is generated locally in your browser and saved straight to
+            When you download a CSV (or, in the Chronology Builder, a PNG, PDF or HTML file), the file is generated locally in your browser and saved straight to
             your device — it is not uploaded to a server first. If you choose to save, print or share that file
             afterwards, that's outside our control, same as any file on your computer.
           </p>
@@ -65,7 +82,7 @@ export default function Privacy() {
             privacy policy, not this one, and we don't pass your questionnaire answers to Google or anyone else. Clicking
             an affiliate product link takes you to Amazon, governed by Amazon's privacy policy. The Pupil Voice tool,
             which a young person completes directly, is kept completely free of adverts and product links on every
-            screen.
+            screen, and so is the Chronology Builder.
           </p>
         </section>
 

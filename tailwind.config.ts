@@ -31,6 +31,12 @@ export default {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+        notice: {
+          DEFAULT: 'hsl(var(--notice))',
+          foreground: 'hsl(var(--notice-foreground))',
+        },
+        warning: 'hsl(var(--warning))',
+        overlay: 'hsl(var(--overlay) / 0.45)',
         success: {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))',
@@ -57,6 +63,8 @@ export default {
         display: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
+        card: '0 1px 3px 0 hsl(20 10% 60% / 0.25), 0 1px 2px -1px hsl(20 10% 60% / 0.2)',
+        badge: '0 0 0 4px hsl(0 0% 100% / 0.7), 0 2px 8px hsl(220 20% 15% / 0.25)',
         glow: '0 4px 25px -5px hsl(354 70% 54% / 0.15), 0 8px 10px -6px hsl(354 70% 54% / 0.08)',
         soft: '0 2px 15px -3px hsl(354 70% 54% / 0.08), 0 4px 6px -4px hsl(354 70% 54% / 0.05)',
       },

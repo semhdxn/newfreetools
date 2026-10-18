@@ -55,7 +55,7 @@ export default function Home() {
             rendered once for every page in App.tsx — no need to repeat it here. */}
         <h1 className="font-display text-3xl font-extrabold sm:text-4xl">SEMH Free Tools</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Five free questionnaires for sensory, behaviour and wellbeing. Everything runs in your browser — there is no account, no
+          Five free questionnaires for sensory, behaviour and wellbeing, plus a chronology builder. Everything runs in your browser — there is no account, no
           upload and no server. When you finish, you download your results as a CSV spreadsheet.
         </p>
 
@@ -64,7 +64,7 @@ export default function Home() {
           <p className="mt-1 text-sm text-muted-foreground">
             Never enter a child's name, initials or any other identifying detail. Each questionnaire is labelled with a randomly
             generated ID such as <span className="font-mono">brave-otter-42</span>. Answers are saved only in this browser, so clearing
-            your browser data or using another device will remove them.
+            your browser data or using another device will remove them. The Chronology Builder is the exception: it saves nothing at all, so export a CSV to keep your work.
           </p>
         </Card>
 
@@ -141,6 +141,24 @@ export default function Home() {
               </Card>
             );
           })}
+          <Card className="flex flex-col border" style={{ backgroundColor: 'hsl(340 55% 95%)', borderColor: 'hsl(340 40% 82%)' }}>
+            <h2 className="font-display text-lg font-bold">Chronology Builder</h2>
+            <p className="mt-1 inline-block self-start rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800">Testing — moving to the premium toolkit</p>
+            <p className="mt-1 flex-1 text-sm text-muted-foreground">
+              Turn a young person's written history into a clear visual timeline, with a one-page PDF, PNG and offline HTML report.
+            </p>
+            <p className="mt-3 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+              Temporarily free while we test it; it will become part of the premium SEMH Toolkit. Not saved anywhere, including this browser, so use Export CSV to keep your work.
+            </p>
+            <div className="mt-4 flex gap-2">
+              <Link to="/chronology" className="flex-1">
+                <Button className="w-full" variant="accent" size="lg">
+                  <Play className="h-4 w-4 mr-1.5" />
+                  Start
+                </Button>
+              </Link>
+            </div>
+          </Card>
         </div>
 
         <section className="mt-10 overflow-hidden rounded-2xl border border-primary/30 bg-primary/5">
