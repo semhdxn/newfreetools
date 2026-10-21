@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, SlidersHorizontal } from "lucide-react";
 import { CATEGORIES, catById, newId, wantsLocation, type Significance, type TimelineEvent } from "@/chronology/lib/timeline";
 import { MonthYearInput } from "@/chronology/components/MonthYearInput";
+import { ChipSelect, EVENT_OR_PERIOD, SIGNIFICANCE_OPTIONS } from "@/chronology/components/ChipSelect";
 import { UK_LOCATIONS } from "@/chronology/lib/locations";
 import { WellbeingInput } from "@/chronology/components/WellbeingInput";
 import type { WellbeingImpact } from "@/chronology/lib/wellbeing";
@@ -10,6 +11,8 @@ interface Props {
   onAdd: (e: TimelineEvent) => void;
   onMore: () => void;
 }
+
+const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({ value: c.id, label: c.name, accent: `var(--cat-${c.id})` }));
 
 /** Main entry card. Category/type/significance and date stay sticky between rows. */
 export function QuickEntry({ onAdd, onMore }: Props) {
@@ -28,10 +31,11 @@ export function QuickEntry({ onAdd, onMore }: Props) {
   const types = catById(category).types as readonly string[];
   const periodCat = category === "living" || category === "education";
   const locField = wantsLocation(type);
+  const isPeriod = periodCat && hasEnd;
 
   const commit = () => {
     if (!date) { setError("Choose a month and year"); return; }
-    const useEnd = periodCat && hasEnd && end;
+    const useEnd = isPeriod && end;
     if (useEnd && end < date) { setError("The 'to' date is before the 'from' date"); return; }
     setError("");
     onAdd({
@@ -53,47 +57,45 @@ export function QuickEntry({ onAdd, onMore }: Props) {
         </div>
         <button type="button" className="btn" onClick={onMore}><SlidersHorizontal size={14} /> More details</button>
       </div>
-      <form className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[13rem_12rem_13rem_minmax(0,1fr)_8rem_auto] lg:items-end"
-        onSubmit={(e) => { e.preventDefault(); commit(); }}>
-        <MonthYearInput label="Date" value={date} onChange={setDate} />
-        <div>
-          <span className="label">Category</span>
-          <select className="field" value={category} onChange={(e) => { const c = catById(e.target.value); setCategory(c.id); setType(c.types[0]); setHasEnd(c.id === "living" || c.id === "education"); setEnd(""); }}>
-            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
+      <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); commit(); }}>
+        <ChipSelect
+          label="Category"
+          options={CATEGORY_OPTIONS}
+          value={category}
+          onChange={(id) => { const c = catById(id); setCategory(c.id); setType(c.types[0]); setHasEnd(c.id === "living" || c.id === "education"); setEnd(""); }}
+        />
+        <ChipSelect label="Type" options={types.map((t) => ({ value: t, label: t }))} value={type} onChange={setType} />
+        {periodCat && (
+          <ChipSelect
+            label="Is this a single event or a period?"
+            options={EVENT_OR_PERIOD}
+            value={hasEnd ? "period" : "event"}
+            onChange={(v) => { setHasEnd(v === "period"); if (v === "event") setEnd(""); }}
+          />
+        )}
+        <div className={`grid gap-3 ${isPeriod ? "sm:grid-cols-2" : ""}`}>
+          <MonthYearInput label={isPeriod ? "From" : "Date"} value={date} onChange={setDate} />
+          {isPeriod && <MonthYearInput label="To" value={end} onChange={setEnd} min={date} startAt={date} clearable />}
         </div>
-        <div>
-          <span className="label">Type</span>
-          <select className="field" value={type} onChange={(e) => setType(e.target.value)}>
-            {types.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+          <div>
+            <span className="label">Label</span>
+            <input className="field" value={label} placeholder="Short description (avoid full names)" autoComplete="off" onChange={(e) => setLabel(e.target.value)} />
+          </div>
+          <button type="submit" className="btn btn-primary h-10"><Plus size={16} /> Add</button>
         </div>
-        <div>
-          <span className="label">Label</span>
-          <input className="field" value={label} placeholder="Short description (avoid full names)" autoComplete="off" onChange={(e) => setLabel(e.target.value)} />
-        </div>
-        <div>
-          <span className="label">Significance</span>
-          <select className="field" value={significance} onChange={(e) => setSignificance(e.target.value as Significance)}>
-            <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
-          </select>
-        </div>
-        <button type="submit" className="btn btn-primary h-10"><Plus size={16} /> Add</button>
-        <div className="sm:col-span-2 lg:col-span-6">
-          <WellbeingInput impact={wellbeingImpact} note={wellbeingNote} onChange={(impact, note) => { setWellbeingImpact(impact); setWellbeingNote(note); }} />
-        </div>
-      </form>
-      <div className="flex flex-wrap items-end gap-4">
         {locField && (
-          <div className="w-56">
+          <div className="max-w-xs">
             <span className="label">Town or city</span>
             <input className="field" list="uk-towns-q" value={location} placeholder="e.g. Leeds" autoComplete="off" onChange={(e) => setLocation(e.target.value)} />
           </div>
         )}
-        <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={approximate} onChange={(e) => setApproximate(e.target.checked)} /> Date approximate</label>
-        {periodCat && <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={hasEnd} onChange={(e) => setHasEnd(e.target.checked)} /> Add a "to" date (period)</label>}
-      </div>
-      {periodCat && hasEnd && <div className="max-w-xs"><MonthYearInput label="To" value={end} onChange={setEnd} /></div>}
+        <div className="flex flex-wrap items-end gap-4">
+          <ChipSelect label="Significance" options={SIGNIFICANCE_OPTIONS} value={significance} onChange={setSignificance} />
+          <label className="inline-flex h-9 items-center gap-2 text-sm"><input type="checkbox" checked={approximate} onChange={(e) => setApproximate(e.target.checked)} /> Date approximate</label>
+        </div>
+        <WellbeingInput impact={wellbeingImpact} note={wellbeingNote} onChange={(impact, note) => { setWellbeingImpact(impact); setWellbeingNote(note); }} />
+      </form>
       <datalist id="uk-towns-q">{UK_LOCATIONS.map((t) => <option key={t} value={t} />)}</datalist>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </section>

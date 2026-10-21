@@ -69,3 +69,19 @@
   body:has(.chron) .print-sheet { position: absolute; left: 0; top: 0; zoom: var(--print-scale, 1); }
   .chron .no-print { display: none !important; }
 }
+
+/* Click-to-choose controls (replace dropdowns): chips and the drill-down date picker */
+.chron .chip {
+  display: inline-flex; min-height: 2.25rem; align-items: center; justify-content: center;
+  border-radius: 0.5rem; border: 1px solid hsl(var(--input)); background: hsl(var(--card));
+  padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; color: hsl(var(--foreground));
+  cursor: pointer; transition: background-color .12s, border-color .12s;
+}
+.chron .chip:hover:not(:disabled) { background: hsl(var(--secondary)); }
+.chron .chip:disabled { opacity: .35; cursor: not-allowed; }
+.chron .chip:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+.chron .chip[aria-checked="true"] { background: hsl(var(--accent)); border-color: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.chron .chip[data-accent] { border-left-width: 4px; border-left-color: var(--chip-accent); }
+.chron .date-pick { margin-top: 0.5rem; border-radius: 0.5rem; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); padding: 0.5rem; }
+.chron .date-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: hsl(var(--muted-foreground)); }
+.chron .date-crumbs button { text-decoration: underline; font-weight: 600; color: hsl(var(--primary)); }

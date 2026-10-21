@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Check, Lock, Pencil, Plus, Trash2 } from "lucide
 import { CATEGORIES, displayLabel, formatDate, newId, wantsLocation, type Person, type Significance, type TimelineEvent } from "@/chronology/lib/timeline";
 import { UK_LOCATIONS } from "@/chronology/lib/locations";
 import { MonthYearInput } from "@/chronology/components/MonthYearInput";
+import { ChipSelect, EVENT_OR_PERIOD, SIGNIFICANCE_OPTIONS } from "@/chronology/components/ChipSelect";
 import { WellbeingInput } from "@/chronology/components/WellbeingInput";
 import { wellbeingOf, type WellbeingImpact } from "@/chronology/lib/wellbeing";
 
@@ -293,19 +294,18 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
               {phase === "entry" && (
               <form className="panel grid gap-3 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); commit(); }}>
                 <p className="text-lg font-bold sm:col-span-2">Enter the {inCat.length ? "next" : "first"} {one}</p>
-                <MonthYearInput label={periodCat && hasEnd ? "From" : "Date"} value={date} onChange={setDate} />
+                <ChipSelect className="sm:col-span-2" label="Type" options={types.map((t) => ({ value: t, label: t }))} value={type} onChange={setType} />
                 {periodCat && (
-                  <div className="sm:col-span-2 space-y-2">
-                    <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={hasEnd} onChange={(e) => setHasEnd(e.target.checked)} /> Add a "to" date (period)</label>
-                    {hasEnd && <MonthYearInput label="To" value={end} onChange={setEnd} />}
-                  </div>
+                  <ChipSelect
+                    className="sm:col-span-2"
+                    label="Is this a single event or a period?"
+                    options={EVENT_OR_PERIOD}
+                    value={hasEnd ? "period" : "event"}
+                    onChange={(v) => { setHasEnd(v === "period"); if (v === "event") setEnd(""); }}
+                  />
                 )}
-                <div>
-                  <span className="label">Type</span>
-                  <select className="field" value={type} onChange={(e) => setType(e.target.value)}>
-                    {types.map((t) => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
+                <MonthYearInput label={periodCat && hasEnd ? "From" : "Date"} value={date} onChange={setDate} />
+                {periodCat && hasEnd && <MonthYearInput label="To" value={end} onChange={setEnd} min={date} startAt={date} clearable />}
                 <div className="sm:col-span-2">
                   <span className="label">Label</span>
                   <input className="field" value={label} placeholder="Short description (avoid full names)" autoComplete="off" onChange={(e) => setLabel(e.target.value)} />
@@ -316,12 +316,7 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
                     <input className="field" list="uk-towns-g" value={location} placeholder="e.g. Leeds" autoComplete="off" onChange={(e) => setLocation(e.target.value)} />
                   </div>
                 )}
-                <div>
-                  <span className="label">Significance</span>
-                  <select className="field" value={significance} onChange={(e) => setSignificance(e.target.value as Significance)}>
-                    <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
-                  </select>
-                </div>
+                <ChipSelect label="Significance" options={SIGNIFICANCE_OPTIONS} value={significance} onChange={setSignificance} />
                 <div className="flex items-end gap-2">
                   <button type="button" className="btn h-10" onClick={() => fadeTo(() => setPhase(lastAdded ? "another" : "ask"))}>Cancel</button>
                   <button type="submit" className="btn btn-primary h-10 flex-1"><Check size={16} /> Save</button>
