@@ -19,7 +19,7 @@ export function Menu({ label, icon, badge, children }: { label: string; icon?: R
         {icon}{label}{badge}<ChevronDown size={14} />
       </button>
       {open && (
-        <div role="menu" className="absolute left-0 z-40 mt-2 w-64 rounded-xl border bg-card p-1.5 shadow-soft">
+        <div role="menu" className="fixed inset-x-4 z-40 mt-2 rounded-xl sm:absolute sm:inset-x-auto sm:left-0 sm:w-64 border bg-card p-1.5 shadow-soft">
           {children(() => setOpen(false))}
         </div>
       )}

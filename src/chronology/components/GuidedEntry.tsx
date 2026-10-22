@@ -142,12 +142,12 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
     <div className="fixed inset-0 z-40 flex h-dvh flex-col overflow-hidden bg-background">
       <datalist id="uk-towns-g">{UK_LOCATIONS.map((t) => <option key={t} value={t} />)}</datalist>
       <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-3xl items-start justify-between gap-3 px-4 py-3">
-          <p role="note" className="flex items-start gap-2 text-xs text-muted-foreground">
+        <div className="mx-auto flex max-w-3xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+          <p role="note" className="flex min-w-0 items-start gap-2 text-xs text-muted-foreground">
             <Lock size={14} className="mt-0.5 shrink-0" />
             <span>Nothing you enter leaves this device or is saved. Closing this tab clears everything. Use Export CSV to keep a copy.</span>
           </p>
-          <span className="flex shrink-0 gap-3 text-sm">
+          <span className="flex flex-wrap gap-x-3 gap-y-1 text-sm sm:shrink-0">
             <button type="button" className="font-medium text-primary underline" onClick={() => fadeTo(onSample)}>Try a sample</button>
             <button type="button" className="font-medium text-primary underline" onClick={() => fadeTo(onFinish)}>Skip to timeline</button>
             <button type="button" className="font-medium text-destructive underline" onClick={onStartOver}>Start again</button>
@@ -373,7 +373,7 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
             <button type="button" className="btn" disabled={step === 0} onClick={() => go(step - 1)}><ArrowLeft size={15} /> Back</button>
             {last
               ? <button type="button" className="btn btn-primary" onClick={() => fadeTo(onFinish)}><Check size={15} /> Finish and view timeline</button>
-              : <button type="button" className="btn btn-primary" onClick={() => go(step + 1)}>
+              : <button type="button" className="btn btn-primary min-w-0" onClick={() => go(step + 1)}>
                   <span className="truncate">{cat && !inCat.length ? "Skip" : "Next"}: {nextName}</span> <ArrowRight size={15} />
                 </button>}
           </div>

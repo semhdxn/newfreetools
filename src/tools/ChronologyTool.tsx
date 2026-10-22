@@ -304,10 +304,10 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
       <header className="no-print border-b bg-card">
         <div className="mx-auto max-w-7xl space-y-3 px-4 py-4">
           <Link to="/" className="inline-block text-sm font-medium text-muted-foreground hover:text-foreground">← All tools</Link>
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground"><CalendarRange size={20} /></span>
-            <div className="min-w-0">
-              <h1 className="truncate text-xl font-extrabold sm:text-2xl">Chronology Builder</h1>
+            <div className="min-w-0 flex-1 basis-48">
+              <h1 className="text-xl font-extrabold sm:text-2xl">Chronology Builder</h1>
               <p className="text-xs text-muted-foreground">Build a clear timeline of a young person's history.</p>
             </div>
             <button type="button" className="btn ml-auto shrink-0" onClick={() => setMode("intro")}>Introduction</button>
