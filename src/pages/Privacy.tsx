@@ -136,9 +136,9 @@ export default function Privacy() {
         <section>
           <h2 className="font-display text-lg font-bold">Cookies and local storage</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            This site's own code does not set any cookies. It uses your browser's local storage for one strictly necessary
-            purpose: saving your in-progress questionnaires so you can pick them up again (entries beginning
-            “semh-free-tools”). It is never shared with anyone. Your consent choices are remembered by Google's consent message. Cookies that may be set by third parties are Google Analytics and Google AdSense, both only subject to your choice in Google's consent message. Amazon may set cookies
+            This site's own code does not set any cookies. It uses your browser's local storage to save your in-progress
+            questionnaires so you can pick them up again, and to remember the date a reminder about the full SEMH Toolkit
+            was last shown, so it appears at most once a day (entries beginning “semh-free-tools”). Neither is shared with anyone. Your consent choices are remembered by Google's consent message. Cookies that may be set by third parties are Google Analytics and Google AdSense, both only subject to your choice in Google's consent message. Amazon may set cookies
             only once you click through to its site. You can also block or delete cookies and local storage in your
             browser settings; the tools still work without them.
           </p>

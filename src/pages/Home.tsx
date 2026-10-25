@@ -4,6 +4,7 @@ import { ArrowRight, Check, Play, RotateCcw, Sparkles } from 'lucide-react';
 import { Button, Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
 import { AdBanner } from '@/components/AdBanner';
+import { PremiumPopup } from '@/components/PremiumPopup';
 import { ADSENSE_SLOTS } from '@/lib/adConfig';
 import { PREMIUM_URL } from '@/lib/links';
 import { TOOL_LABELS, clearAllSessions, clearSession, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
@@ -41,6 +42,7 @@ export default function Home() {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+      <PremiumPopup />
       <div>
         {/* The logo now lives in the shared white heading bar (src/components/Header.tsx),
             rendered once for every page in App.tsx — no need to repeat it here. */}
