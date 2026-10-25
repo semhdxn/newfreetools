@@ -8,7 +8,8 @@ import { adsEnabledFor, ADSENSE_SLOTS } from '@/lib/adConfig';
 import { AdBanner } from '@/components/AdBanner';
 import { InterstitialGate } from '@/components/InterstitialGate';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
-import { PREMIUM_URL } from '@/lib/links';
+import { premiumUrl } from '@/lib/links';
+import { ResultsUpgradeCard } from '@/components/ResultsUpgradeCard';
 import {
   Cohort,
   behaviourFunctions,
@@ -128,7 +129,7 @@ export default function BehaviourTool() {
           <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
           <p>
             This is a free, basic version of the Behaviour Indicator in the{' '}
-            <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit (premium)</a>. The premium
+            <a className="underline" href={premiumUrl('inline', 'behaviour')}>full SEMH Toolkit (premium)</a>. The premium
             version includes a fuller strategy library, saved records and richer reports.
           </p>
         </div>
@@ -316,7 +317,7 @@ export default function BehaviourTool() {
           <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
           <p>
             This is a free, basic version of the Behaviour Indicator in the{' '}
-            <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit (premium)</a>. The premium
+            <a className="underline" href={premiumUrl('inline', 'behaviour')}>full SEMH Toolkit (premium)</a>. The premium
             version includes a fuller strategy library, saved records and richer reports.
           </p>
         </div>
@@ -400,6 +401,8 @@ export default function BehaviourTool() {
         <div className="flex flex-wrap gap-3">
           <PremiumLockButton label="Download high-quality PDF" className="min-w-[160px] flex-1" />
         </div>
+
+        <ResultsUpgradeCard tool="behaviour" />
 
         <AdBanner toolId="behaviour" slot={ADSENSE_SLOTS.resultsBanner} />
       </ToolShell>

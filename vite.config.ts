@@ -2,10 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
-// Static, front-end only build. `base: './'` means the built `dist/` folder can
-// be dropped on any host (or opened from a sub-path) without rewriting URLs.
+// Static, front-end only build served from the site root. Absolute asset URLs (base '/')
+// are required now that tools live at real paths like /sensory/ rather than behind a hash.
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [react()],
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },

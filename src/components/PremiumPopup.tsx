@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { PREMIUM_URL } from '@/lib/links';
+import { premiumUrl } from '@/lib/links';
+import { trackEvent } from '@/lib/analytics';
 
 const STORAGE_KEY = 'semh-free-tools-popup-last-shown';
 const SHOW_DELAY_MS = 4000;
@@ -57,6 +58,7 @@ export function PremiumPopup() {
       }
       if (consentVisible) return; // still blocked after 30s: skip today rather than stack dialogs
       markShown();
+      trackEvent('premium_popup_view');
       setOpen(true);
     };
     timer = window.setTimeout(attempt, SHOW_DELAY_MS);
@@ -114,9 +116,12 @@ export function PremiumPopup() {
         </ul>
         <div className="mt-6 flex flex-col gap-2 sm:flex-row">
           <a
-            href={`${PREMIUM_URL}?utm_source=freetools&utm_medium=popup`}
+            href={premiumUrl('popup', 'home')}
             className="sm:flex-1"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              trackEvent('premium_cta_click', { tool: 'home', location: 'popup' });
+              setOpen(false);
+            }}
           >
             <Button variant="accent" size="lg" className="w-full">
               Explore the full toolkit

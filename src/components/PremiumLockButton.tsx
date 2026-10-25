@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Lock, X } from 'lucide-react';
 import { Button, Card } from '@/components/ui';
-import { PREMIUM_URL } from '@/lib/links';
+import { currentToolSlug, premiumUrl } from '@/lib/links';
+import { trackEvent } from '@/lib/analytics';
 
 /**
  * A visible-but-locked action (e.g. "Save young person for future") that
@@ -21,7 +22,10 @@ export function PremiumLockButton({
     <>
       <Button
         variant="outline"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          trackEvent('premium_lock_open', { tool: currentToolSlug(), label });
+          setOpen(true);
+        }}
         className={`min-w-[160px] flex-1 ${className}`}
         aria-haspopup="dialog"
       >
@@ -57,7 +61,10 @@ export function PremiumLockButton({
               feature for now.
             </p>
             <div className="p-2">
-              <a href={PREMIUM_URL}>
+              <a
+                href={premiumUrl('lock_dialog', currentToolSlug())}
+                onClick={() => trackEvent('premium_cta_click', { tool: currentToolSlug(), location: 'lock_dialog' })}
+              >
                 <Button variant="accent" className="w-full">Explore the full SEMH Toolkit</Button>
               </a>
             </div>

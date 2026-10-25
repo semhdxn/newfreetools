@@ -6,7 +6,8 @@ import { Footer } from '@/components/Footer';
 import { AdBanner } from '@/components/AdBanner';
 import { PremiumPopup } from '@/components/PremiumPopup';
 import { ADSENSE_SLOTS } from '@/lib/adConfig';
-import { PREMIUM_URL } from '@/lib/links';
+import { premiumUrl } from '@/lib/links';
+import { trackEvent } from '@/lib/analytics';
 import { TOOL_LABELS, clearAllSessions, clearSession, listSessions, type ToolId, type ToolSession } from '@/lib/storage';
 
 const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
@@ -78,7 +79,11 @@ export default function Home() {
                 <div className="mt-4 flex gap-2">
                   {tool.enabled ? (
                     <>
-                      <Link to={tool.path} className="flex-1">
+                      <Link
+                        to={tool.path}
+                        className="flex-1"
+                        onClick={() => trackEvent('tool_card_click', { tool: tool.id, resumed: Boolean(s) })}
+                      >
                         <Button className="w-full text-white hover:opacity-90" variant="accent" size={s ? 'md' : 'lg'} style={{ backgroundColor: accent.btn }}>
                           <Play className="h-4 w-4 mr-1.5" />
                           {s ? 'Resume' : 'Start'}
@@ -165,7 +170,11 @@ export default function Home() {
             </ul>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <a href={PREMIUM_URL} className="sm:w-auto">
+              <a
+                href={premiumUrl('home_section', 'home')}
+                className="sm:w-auto"
+                onClick={() => trackEvent('premium_cta_click', { tool: 'home', location: 'home_section' })}
+              >
                 <Button variant="accent" size="lg" className="w-full sm:w-auto">
                   Explore the full toolkit
                   <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -197,7 +206,7 @@ export default function Home() {
 
         <p className="mt-10 text-xs text-muted-foreground">
           These tools are for reflection and planning. They are not a diagnostic assessment and do not replace advice from a
-          qualified professional. See <a className="underline" href={PREMIUM_URL}>the full SEMH Toolkit</a> for saved records and reports.
+          qualified professional. See <a className="underline" href={premiumUrl('home_footnote', 'home')}>the full SEMH Toolkit</a> for saved records and reports.
         </p>
 
         <Footer />

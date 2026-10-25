@@ -16,6 +16,7 @@ import { AdBanner } from '@/components/AdBanner';
 import { InterstitialGate } from '@/components/InterstitialGate';
 import { AffiliateDisclosureBanner, MultiAreaProductGrid } from '@/components/AffiliateProducts';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
+import { ResultsUpgradeCard } from '@/components/ResultsUpgradeCard';
 
 /** A break appears after every Nth question — mirrors BehaviourTool's per-statement cadence. */
 const INTERSTITIAL_EVERY_N_QUESTIONS = 5;
@@ -171,6 +172,8 @@ export default function HomeBehaviourTool() {
             Back to the questionnaire
           </Button>
         </div>
+
+        <ResultsUpgradeCard tool="home-behaviour" />
 
         <AdBanner toolId="home-behaviour" slot={ADSENSE_SLOTS.resultsBanner} />
       </ToolShell>

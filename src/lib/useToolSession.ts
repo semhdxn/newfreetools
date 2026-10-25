@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { generateChildId } from './randomWords';
+import { trackEvent } from './analytics';
 import { clearSession, loadSession, saveSession, type ToolId, type ToolSession } from './storage';
 
 /**
@@ -17,6 +18,17 @@ export function useToolSession<S>(toolId: ToolId, initialState: S) {
     return { toolId, childId: generateChildId(), createdAt: now, updatedAt: now, completed: false, state: initialState };
   });
 
+  // Analytics only (tool id, never the child ID): one tool_start per genuinely new
+  // session, one tool_complete when it flips to completed.
+  const resumed = useRef<boolean | null>(null);
+  if (resumed.current === null) resumed.current = loadSession(toolId) !== null;
+  const startTracked = useRef(false);
+  const prevCompleted = useRef(session.completed);
+  useEffect(() => {
+    if (session.completed && !prevCompleted.current) trackEvent('tool_complete', { tool: toolId });
+    prevCompleted.current = session.completed;
+  }, [session.completed, toolId]);
+
   const first = useRef(true);
   useEffect(() => {
     // Skip the very first render so simply visiting a tool page does not create
@@ -25,8 +37,12 @@ export function useToolSession<S>(toolId: ToolId, initialState: S) {
       first.current = false;
       return;
     }
+    if (!startTracked.current) {
+      startTracked.current = true;
+      if (!resumed.current) trackEvent('tool_start', { tool: toolId });
+    }
     saveSession(session);
-  }, [session]);
+  }, [session, toolId]);
 
   const setState = useCallback((updater: S | ((prev: S) => S)) => {
     setSession((prev) => ({
@@ -43,6 +59,8 @@ export function useToolSession<S>(toolId: ToolId, initialState: S) {
     clearSession(toolId);
     const now = new Date().toISOString();
     first.current = true;
+    startTracked.current = false;
+    resumed.current = false;
     setSession({ toolId, childId: generateChildId(), createdAt: now, updatedAt: now, completed: false, state: initialState });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toolId]);

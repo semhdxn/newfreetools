@@ -16,6 +16,8 @@ import {
   deleteQuestionnaire,
 } from '@/lib/mwm/localStorage';
 import { downloadPdf } from '@/lib/mwm/generatePdf';
+import { trackEvent } from '@/lib/analytics';
+import { ResultsUpgradeCard } from '@/components/ResultsUpgradeCard';
 import CriteriaPicker from '@/components/mwm/CriteriaPicker';
 import SelectedCriteriaList from '@/components/mwm/SelectedCriteriaList';
 import CustomCriteriaForm from '@/components/mwm/CustomCriteriaForm';
@@ -172,6 +174,8 @@ export default function MwmTool() {
           customQuestions: activeQuestionnaire.customQuestions,
           createdDate: new Date().toLocaleDateString(),
         });
+        trackEvent('pdf_download', { tool: 'mwm' });
+        trackEvent('tool_complete', { tool: 'mwm' });
       }
       // Go back to index — keep the already-accepted disclaimer/permission so it isn't
       // re-asked after every questionnaire built in the same session.
@@ -507,6 +511,8 @@ export default function MwmTool() {
               </dl>
             </div>
           </Card>
+
+          <ResultsUpgradeCard tool="mwm" />
 
           <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.resultsBanner} />
         </div>

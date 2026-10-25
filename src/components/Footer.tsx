@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { GA_CONFIGURED, trackingEnabledFor } from '@/lib/analytics';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
-import { PREMIUM_URL } from '@/lib/links';
+import { premiumUrl } from '@/lib/links';
 
 export function Footer() {
   const slug = useLocation().pathname.replace(/^\//, '').split('/')[0];
@@ -15,7 +15,7 @@ export function Footer() {
       </p>
       <p className="mt-2">
         Adverts and affiliate links help keep these free tools free; they never appear on Pupil Voice. A fuller,
-        paid version is available as the <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit</a>.
+        paid version is available as the <a className="underline" href={premiumUrl('footer', toolId ?? 'home')}>full SEMH Toolkit</a>.
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
         <Link className="underline hover:text-foreground" to="/privacy">Privacy Policy</Link>

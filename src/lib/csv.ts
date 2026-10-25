@@ -1,3 +1,4 @@
+import { trackEvent } from './analytics';
 import { downloadCsv, rowsToCsv, todayStamp, withDataRow } from './exportCsv';
 
 export type Row = Array<string | number | null | undefined>;
@@ -47,4 +48,5 @@ export function buildToolCsv(opts: {
 
 export function downloadToolCsv(toolSlug: string, childId: string, csv: string): void {
   downloadCsv(`${toolSlug}-${childId}-${todayStamp()}.csv`, csv);
+  trackEvent('csv_download', { tool: toolSlug });
 }

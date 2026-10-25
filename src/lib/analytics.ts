@@ -24,6 +24,18 @@ export const GA_CONFIGURED = /^G-[A-Z0-9]{5,}$/.test(GA_MEASUREMENT_ID) && GA_ME
  */
 const TRACKING_EXCLUDED_TOOLS: ToolId[] = ['student-voice'];
 
+/**
+ * Sends a GA4 event. A no-op unless GA is configured AND already loaded on this
+ * route, so it does nothing on Pupil Voice and the Chronology Builder (where the
+ * script never loads) and does nothing before consent handling has run its course
+ * (Consent Mode keeps it cookieless until the visitor agrees). Never pass a child
+ * ID or any answer content as a parameter: tool id and placement only.
+ */
+export function trackEvent(name: string, params: Record<string, string | number | boolean> = {}): void {
+  if (!GA_CONFIGURED || typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', name, params);
+}
+
 export function trackingEnabledFor(toolId: ToolId): boolean {
   return !TRACKING_EXCLUDED_TOOLS.includes(toolId);
 }

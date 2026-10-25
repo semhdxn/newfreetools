@@ -1,0 +1,75 @@
+{
+  "origin": "https://freetools.semh.co.uk",
+  "siteName": "SEMH Free Tools",
+  "routes": [
+    {
+      "path": "/",
+      "title": "Free SEMH Tools — Sensory, Behaviour & Pupil Voice Checklists",
+      "description": "Free SEMH questionnaire tools that run entirely in your browser. Complete a checklist and download the results as a CSV. No account, no data sent anywhere.",
+      "h1": "SEMH Free Tools",
+      "summary": "Free questionnaires for sensory, behaviour and wellbeing, for teachers, SENCos and other practitioners. No account needed, nothing is uploaded: everything stays in your browser and you download your results as a CSV."
+    },
+    {
+      "path": "/sensory",
+      "tool": true,
+      "title": "Free Sensory Profile Checklist for Schools | SEMH Tools",
+      "description": "A free sensory checklist for practitioners. See which sensory areas stand out, get practical strategies and build a sensory circuit. No account, nothing uploaded.",
+      "h1": "Sensory Suggester",
+      "summary": "Tick the statements that sound like the young person and see which of 22 sensory areas stand out across over-responsive, under-responsive and sensory-seeking patterns. Choose strategies for the areas that matter most and build a simple sensory circuit. Free, with no account, and your answers stay in your browser."
+    },
+    {
+      "path": "/behaviour",
+      "tool": true,
+      "title": "Free Behaviour Function Checklist for Schools | SEMH Tools",
+      "description": "A free school behaviour checklist that explores the possible functions of a pupil's behaviour (control, attention, escape, sensory, self-esteem), with linked strategies.",
+      "h1": "Behaviour Indicator",
+      "summary": "Rate how often behaviours happen in school to explore their possible functions: control, attention, escape, sensory and self-esteem. Primary and secondary versions, with strategies for the functions that stand out. Free, no account, nothing uploaded."
+    },
+    {
+      "path": "/home-behaviour",
+      "tool": true,
+      "title": "Free Home Behaviour Questionnaire for Parents | SEMH Tools",
+      "description": "A free, parent-friendly questionnaire about behaviour and wellbeing at home, with practical advice for the areas that matter most. No account needed.",
+      "h1": "Home Behaviour",
+      "summary": "A parent and carer friendly check of behaviour and wellbeing at home. Answer a short set of questions and get practical advice for the categories that are worth looking at first. Free, no account, and your answers stay in your browser."
+    },
+    {
+      "path": "/student-voice",
+      "tool": true,
+      "title": "Free Pupil Voice Questionnaire for Children | SEMH Tools",
+      "description": "A free, child-friendly pupil voice tool so a young person's own view of school is heard. No account, no ads, nothing uploaded.",
+      "h1": "Pupil Voice",
+      "summary": "A child-friendly questionnaire, completed by the young person, covering how school feels, what helps in the environment and how adults respond. Includes a 'my school day' activity and a classroom seat picker. Free, no ads, no account and nothing uploaded."
+    },
+    {
+      "path": "/mwm",
+      "tool": true,
+      "title": "Measure What Matters: Free Outcome Questionnaire Builder",
+      "description": "Build a printable 1 to 5 scale questionnaire from a bank of 35 SEMH outcome criteria and download it as a PDF. Free, no account needed.",
+      "h1": "Measure What Matters",
+      "summary": "Choose the outcomes that matter from a bank of 35 criteria, build a questionnaire and download a printable PDF form to track progress with a young person. Free and with no account."
+    },
+    {
+      "path": "/faq",
+      "title": "FAQs | SEMH Free Tools",
+      "description": "Answers to common questions about the free SEMH tools: how your data is handled, saving results, and how they relate to the full SEMH Toolkit.",
+      "h1": "Frequently asked questions",
+      "summary": "How the free SEMH tools work, how your data is handled, how to save your results and how they relate to the full SEMH Toolkit."
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy Policy | SEMH Free Tools",
+      "description": "How the free SEMH tools handle data: no accounts, no server-side storage, answers stay in your browser.",
+      "h1": "Privacy Policy",
+      "summary": "This site has no account, no server and no database. Every questionnaire runs in your browser and your answers stay on your device."
+    },
+    {
+      "path": "/chronology",
+      "index": false,
+      "title": "Chronology Builder | SEMH Free Tools",
+      "description": "Turn a young person's written history into a clear visual timeline.",
+      "h1": "Chronology Builder",
+      "summary": "Turn a young person's written history into a clear visual timeline."
+    }
+  ]
+}

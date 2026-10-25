@@ -20,7 +20,7 @@ npm run build    # type-check + static build into free-tools/dist
 npm run preview
 ```
 
-`dist/` is plain static output (`base: './'`, hash routing), so it can be hosted from any folder, bucket or static host without server rewrite rules.
+`dist/` is plain static output (`base: '/'`, path routing) with a prerendered HTML file per public route and a sitemap (`scripts/prerender.mjs`). Host it at a domain root; add a 404-to-`/index.html` rewrite so unknown deep links still load the app.
 
 ## Privacy model
 

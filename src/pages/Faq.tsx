@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
-import { PREMIUM_URL } from '@/lib/links';
+import { premiumUrl } from '@/lib/links';
 
 const FAQS: { q: string; a: ReactNode }[] = [
   {
@@ -30,7 +30,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
     a: (
       <>
         It is temporarily available on this site while we test it. It will become part of the premium SEMH Toolkit at{' '}
-        <a className="underline" href={PREMIUM_URL}>toolkit.semh.co.uk</a> and will then be removed from this free site, so export a CSV of any
+        <a className="underline" href={premiumUrl('faq', 'faq')}>toolkit.semh.co.uk</a> and will then be removed from this free site, so export a CSV of any
         chronology you want to keep.
       </>
     ),
@@ -71,7 +71,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
     q: 'How do I get in touch?',
     a: (
       <>
-        Email <a className="underline" href="mailto:semhadmin@semh.co.uk">semhadmin@semh.co.uk</a>, including for privacy questions. For the full SEMH Toolkit, visit <a className="underline" href={PREMIUM_URL}>toolkit.semh.co.uk</a>.
+        Email <a className="underline" href="mailto:semhadmin@semh.co.uk">semhadmin@semh.co.uk</a>, including for privacy questions. For the full SEMH Toolkit, visit <a className="underline" href={premiumUrl('faq', 'faq')}>toolkit.semh.co.uk</a>.
       </>
     ),
   },
