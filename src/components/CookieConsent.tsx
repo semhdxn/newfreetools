@@ -6,6 +6,8 @@ import { GA_CONFIGURED, getStoredConsent, setStoredConsent, trackingEnabledFor }
 import { isChronologyPath } from '@/lib/links';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
 
+export const OPEN_COOKIE_SETTINGS_EVENT = 'open-cookie-settings';
+
 function toolIdForPath(pathname: string): ToolId | null {
   const slug = pathname.replace(/^\//, '').split('/')[0];
   return slug in TOOL_LABELS ? (slug as ToolId) : null;
@@ -32,6 +34,14 @@ export function CookieConsent() {
       return;
     }
     setShowBanner(getStoredConsent() === null);
+  }, [relevant]);
+
+  // The footer's "Cookie settings" link re-opens the banner so a choice can be changed any time.
+  useEffect(() => {
+    if (!relevant) return;
+    const open = () => setShowBanner(true);
+    window.addEventListener(OPEN_COOKIE_SETTINGS_EVENT, open);
+    return () => window.removeEventListener(OPEN_COOKIE_SETTINGS_EVENT, open);
   }, [relevant]);
 
   const handleAccept = () => {
@@ -61,7 +71,7 @@ export function CookieConsent() {
           <div className="flex-1">
             <p className="mb-1 text-sm font-semibold text-foreground">Cookie Consent</p>
             <p className="text-xs text-muted-foreground">
-              We'd like to use Google Analytics to see how this site is used — it won't run unless you accept. See our{' '}
+              We'd like to use Google Analytics cookies to see how this site is used — they won't be set unless you accept. Adverts have their own consent message from Google. See our{' '}
               <Link className="font-medium underline" to="/privacy">Privacy Policy</Link> for details.
             </p>
           </div>

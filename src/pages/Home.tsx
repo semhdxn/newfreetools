@@ -20,20 +20,17 @@ const TOOLS: { id: ToolId; path: string; blurb: string; enabled: boolean }[] = [
  *  brand's pink/red primary (~354° hue), kept light enough that the existing
  *  dark foreground/muted-foreground text stays fully readable on top. */
 const PREMIUM_FEATURES = [
-  'Save results securely and build a record for each young person (up to 50 young people and 250 assessments)',
-  'Professional PDF reports to share with colleagues, parents and carers',
-  'Compare up to 5 results over time to see progress',
-  'Gentle email reminder 6 weeks after an assessment, so reviews don\'t get missed',
-  'Bring in a parent\'s or pupil\'s CSV from these free tools and attach it to a record',
-  'A completely ad-free experience',
+  'Save results securely and build a record for each young person',
+  'Professional PDF reports, and comparisons to see progress over time',
+  'Gentle review reminders, plus a completely ad-free experience',
 ];
 
-const TOOL_ACCENTS: Record<ToolId, { bg: string; border: string }> = {
-  sensory: { bg: 'hsl(200 70% 95%)', border: 'hsl(200 55% 80%)' },
-  behaviour: { bg: 'hsl(30 75% 94%)', border: 'hsl(30 60% 80%)' },
-  'home-behaviour': { bg: 'hsl(266 50% 96%)', border: 'hsl(266 40% 84%)' },
-  'student-voice': { bg: 'hsl(46 80% 93%)', border: 'hsl(46 60% 78%)' },
-  mwm: { bg: 'hsl(150 40% 94%)', border: 'hsl(150 35% 79%)' },
+const TOOL_ACCENTS: Record<ToolId, { bg: string; border: string; btn: string }> = {
+  sensory: { bg: 'hsl(200 70% 95%)', border: 'hsl(200 55% 80%)', btn: 'hsl(200 65% 38%)' },
+  behaviour: { bg: 'hsl(30 75% 94%)', border: 'hsl(30 60% 80%)', btn: 'hsl(26 80% 38%)' },
+  'home-behaviour': { bg: 'hsl(266 50% 96%)', border: 'hsl(266 40% 84%)', btn: 'hsl(266 45% 47%)' },
+  'student-voice': { bg: 'hsl(46 80% 93%)', border: 'hsl(46 60% 78%)', btn: 'hsl(40 85% 34%)' },
+  mwm: { bg: 'hsl(150 40% 94%)', border: 'hsl(150 35% 79%)', btn: 'hsl(150 45% 30%)' },
 };
 
 export default function Home() {
@@ -43,41 +40,17 @@ export default function Home() {
   const sessionFor = (id: ToolId) => sessions.find((s) => s.toolId === id);
 
   return (
-    // The two <aside> rails only show at xl+ (they'd have nowhere to go on tablet/mobile),
-    // so ads live down the side instead of stacked as banners between the card grid.
-    <div className="mx-auto flex w-full max-w-[1400px] justify-center gap-6 px-4 py-10">
-      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
-        <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" orientation="vertical" />
-      </aside>
-
-      <div className="w-full max-w-4xl sm:px-6">
+    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+      <div>
         {/* The logo now lives in the shared white heading bar (src/components/Header.tsx),
             rendered once for every page in App.tsx — no need to repeat it here. */}
         <h1 className="font-display text-3xl font-extrabold sm:text-4xl">SEMH Free Tools</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Five free questionnaires for sensory, behaviour and wellbeing, plus a chronology builder. Everything runs in your browser — there is no account, no
-          upload and no server. When you finish, you download your results as a CSV spreadsheet.
+          Free questionnaires for sensory, behaviour and wellbeing, plus a chronology builder. No account, nothing uploaded:
+          everything stays in your browser, and you download your results as a CSV.
         </p>
 
-        <Card className="mt-6 border-accent/40 bg-accent/5">
-          <h2 className="font-display text-base font-bold">Privacy</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Never enter a child's name, initials or any other identifying detail. Each questionnaire is labelled with a randomly
-            generated ID such as <span className="font-mono">brave-otter-42</span>. Answers are saved only in this browser, so clearing
-            your browser data or using another device will remove them. The Chronology Builder is the exception: it saves nothing at all, so export a CSV to keep your work.
-          </p>
-        </Card>
-
-        <div className="mt-4 flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
-          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-          <p>
-            These are free, basic versions of the tools in the full SEMH Toolkit (premium) — saved records and richer reports
-            live there. Adverts and sponsored products on this site help cover the cost of developing
-            and running these free tools, so they can stay free to use.
-          </p>
-        </div>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {TOOLS.map((tool) => {
             const s = sessionFor(tool.id);
             const accent = TOOL_ACCENTS[tool.id];
@@ -104,7 +77,7 @@ export default function Home() {
                   {tool.enabled ? (
                     <>
                       <Link to={tool.path} className="flex-1">
-                        <Button className="w-full" variant="accent" size={s ? 'md' : 'lg'}>
+                        <Button className="w-full text-white hover:opacity-90" variant="accent" size={s ? 'md' : 'lg'} style={{ backgroundColor: accent.btn }}>
                           <Play className="h-4 w-4 mr-1.5" />
                           {s ? 'Resume' : 'Start'}
                         </Button>
@@ -141,7 +114,7 @@ export default function Home() {
               </Card>
             );
           })}
-          <Card className="flex flex-col border" style={{ backgroundColor: 'hsl(340 55% 95%)', borderColor: 'hsl(340 40% 82%)' }}>
+          <Card className="flex flex-col border" style={{ backgroundColor: 'hsl(220 18% 95%)', borderColor: 'hsl(220 14% 82%)' }}>
             <h2 className="font-display text-lg font-bold">Chronology Builder</h2>
             <p className="mt-1 inline-block self-start rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800">Testing — moving to the premium toolkit</p>
             <p className="mt-1 flex-1 text-sm text-muted-foreground">
@@ -161,19 +134,26 @@ export default function Home() {
           </Card>
         </div>
 
+        <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" className="mt-8" />
+
+        <Card className="mt-8 border-accent/40 bg-accent/5">
+          <h2 className="font-display text-base font-bold">Privacy</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Never enter a child's name, initials or any other identifying detail. Each questionnaire gets a random ID such as{' '}
+            <span className="font-mono">brave-otter-42</span>. Answers are saved only in this browser, so clearing your browser data
+            or switching device removes them. The Chronology Builder saves nothing at all, so export a CSV to keep your work.
+          </p>
+        </Card>
+
         <section className="mt-10 overflow-hidden rounded-2xl border border-primary/30 bg-primary/5">
-          <div className="p-6 sm:p-8">
+          <div className="p-5 sm:p-6">
             <p className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
               SEMH Toolkit Premium
             </p>
-            <h2 className="mt-3 font-display text-2xl font-extrabold sm:text-3xl">Ready to go beyond a one-off check?</h2>
-            <p className="mt-2 max-w-2xl text-muted-foreground">
-              The free tools are a great starting point. The full SEMH Toolkit lets you keep records, track progress over time and
-              produce reports you can share, all in one place.
-            </p>
+            <h2 className="mt-3 font-display text-xl font-extrabold sm:text-2xl">Ready to go beyond a one-off check?</h2>
 
-            <ul className="mt-5 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+            <ul className="mt-4 space-y-2">
               {PREMIUM_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -182,7 +162,7 @@ export default function Home() {
               ))}
             </ul>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
               <a href={PREMIUM_URL} className="sm:w-auto">
                 <Button variant="accent" size="lg" className="w-full sm:w-auto">
                   Explore the full toolkit
@@ -191,8 +171,7 @@ export default function Home() {
               </a>
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">&pound;9.99/month</span> or{' '}
-                <span className="font-semibold text-foreground">&pound;100/year</span> (about two months free). Organisation plans
-                available for schools and settings.
+                <span className="font-semibold text-foreground">&pound;100/year</span>.
               </p>
             </div>
           </div>
@@ -222,9 +201,6 @@ export default function Home() {
         <Footer />
       </div>
 
-      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
-        <AdBanner slot={ADSENSE_SLOTS.homeBanner} label="Advertisement" orientation="vertical" />
-      </aside>
     </div>
   );
 }

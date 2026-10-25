@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GA_CONFIGURED, GA_MEASUREMENT_ID, getStoredConsent, trackingEnabledFor } from '@/lib/analytics';
+import { GA_CONFIGURED, GA_MEASUREMENT_ID, trackingEnabledFor } from '@/lib/analytics';
 import { isChronologyPath } from '@/lib/links';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
 
@@ -56,14 +56,18 @@ export function AnalyticsLoader() {
         };
       window.gtag('js', new Date());
 
-      // Consent Mode default — 'granted' only if a past visit already
-      // accepted; otherwise 'denied' until CookieConsent's Accept button
-      // updates it. GA still receives basic, cookieless pings while denied
-      // (Google's standard Consent Mode behaviour) but sets no cookies and
-      // collects nothing identifiable until consent is granted.
+      // Consent Mode default. In the UK/EEA/Switzerland analytics storage is
+      // denied until the visitor consents through Google's own consent message
+      // (AdSense > Privacy & messaging), which updates Consent Mode itself.
+      // Elsewhere no consent message is shown, so analytics is granted.
       window.gtag('consent', 'default', {
-        analytics_storage: getStoredConsent() === 'accepted' ? 'granted' : 'denied',
+        analytics_storage: 'denied',
+        region: [
+          'GB', 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT',
+          'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'CH',
+        ],
       });
+      window.gtag('consent', 'default', { analytics_storage: 'granted' });
 
       // send_page_view: false — this component sends page_view itself below,
       // on every route change, since GA can't see SPA navigation on its own.

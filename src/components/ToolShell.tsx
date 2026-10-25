@@ -32,9 +32,9 @@ export function ToolShell({
   onRestart: () => void;
   children: ReactNode;
   footer?: ReactNode;
-  /** Pass a ToolId to show sticky vertical ad rails either side of this screen at xl+
-   *  widths (there's no room for them below that) — for long results/builder screens
-   *  that want ads beyond whatever <AdBanner> slots already sit inside `children`. */
+  /** Pass a ToolId to show one banner ad below this screen's content (above the footer) —
+   *  for long results/builder screens. Side rails were removed; the prop name is kept so
+   *  existing callers don't need to change. */
   sideRails?: ToolId;
 }) {
   const showProgress = typeof stepIndex === 'number' && typeof stepCount === 'number' && stepCount > 0;
@@ -68,6 +68,8 @@ export function ToolShell({
 
       {footer && <div className="mt-8">{footer}</div>}
 
+      {sideRails && <AdBanner toolId={sideRails} slot={ADSENSE_SLOTS.resultsBanner} className="mt-8" />}
+
       <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5 text-xs text-muted-foreground">
         <p>Your answers are saved in this browser only. Nothing is uploaded.</p>
         <Button
@@ -84,19 +86,7 @@ export function ToolShell({
     </div>
   );
 
-  if (!sideRails) return content;
-
-  return (
-    <div className="mx-auto flex w-full max-w-[1600px] justify-center gap-6 px-4">
-      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
-        <AdBanner toolId={sideRails} slot={ADSENSE_SLOTS.resultsBanner} orientation="vertical" />
-      </aside>
-      {content}
-      <aside className="sticky top-6 hidden h-fit w-[160px] shrink-0 xl:block">
-        <AdBanner toolId={sideRails} slot={ADSENSE_SLOTS.resultsBanner} orientation="vertical" />
-      </aside>
-    </div>
-  );
+  return content;
 }
 
 /** Sticky next/back bar so the controls are always reachable on mobile. */

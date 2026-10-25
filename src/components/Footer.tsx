@@ -1,24 +1,34 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { GA_CONFIGURED, trackingEnabledFor } from '@/lib/analytics';
+import { TOOL_LABELS, type ToolId } from '@/lib/storage';
 import { PREMIUM_URL } from '@/lib/links';
 
 export function Footer() {
+  const slug = useLocation().pathname.replace(/^\//, '').split('/')[0];
+  const toolId = slug in TOOL_LABELS ? (slug as ToolId) : null;
+  const showCookieSettings = GA_CONFIGURED && (toolId ? trackingEnabledFor(toolId) : true);
   return (
     <footer className="mx-auto mt-12 w-full max-w-4xl border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6">
       <p>
-        As an Amazon Associate, SEMH.co.uk earns from qualifying purchases. Product links on results pages are
-        affiliate links (#ad) — we may earn a small commission at no extra cost to you, which helps fund these free
-        tools. Products are suggestions only, not a recommendation or endorsement of any specific brand.
+        As an Amazon Associate, SEMH.co.uk earns from qualifying purchases. Product links are affiliate links (#ad) and
+        never an endorsement of a brand.
       </p>
       <p className="mt-2">
-        These tools are a free, basic version of the{' '}
-        <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit (premium)</a>. Adverts and sponsored products
-        (Google AdSense and affiliate links) help cover the cost of developing and running these free resources, so
-        they can stay free to use. Ads and product suggestions are never shown on the Pupil Voice tool, which is
-        completed directly by the young person.
+        Adverts and affiliate links help keep these free tools free; they never appear on Pupil Voice. A fuller,
+        paid version is available as the <a className="underline" href={PREMIUM_URL}>full SEMH Toolkit</a>.
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
         <Link className="underline hover:text-foreground" to="/privacy">Privacy Policy</Link>
         <Link className="underline hover:text-foreground" to="/faq">FAQs</Link>
+        {showCookieSettings && (
+          <button
+            type="button"
+            className="underline hover:text-foreground"
+            onClick={() => (window as unknown as { googlefc?: { showRevocationMessage?: () => void } }).googlefc?.showRevocationMessage?.()}
+          >
+            Cookie settings
+          </button>
+        )}
         <span>© {new Date().getFullYear()} SEMH.co.uk</span>
       </div>
     </footer>
