@@ -95,7 +95,7 @@ export function PremiumPopup() {
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Close"
-          className="absolute right-3 top-3 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="absolute right-2 top-2 rounded-full p-2.5 text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <X className="h-5 w-5" />
         </button>

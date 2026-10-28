@@ -44,7 +44,7 @@ export function ToolShell({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         {/* The logo lives in the shared header above (src/components/Header.tsx), so this
             is a plain text back-link rather than repeating the icon here too. */}
-        <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+        <Link to="/" className="-my-2 flex items-center gap-2 py-2 pr-3 text-sm font-medium text-muted-foreground hover:text-foreground">
           <span>← All tools</span>
         </Link>
         <span className="rounded-full bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">

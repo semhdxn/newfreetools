@@ -239,7 +239,7 @@ function StatementCard({
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            className="-mb-2 -mr-2 inline-block px-2 py-2 text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >
             Source
           </a>
@@ -717,11 +717,12 @@ export default function SensoryTool() {
                 </p>
               </div>
 
-              <div className="overflow-x-auto">
+              <p className="text-xs text-muted-foreground sm:hidden">Swipe sideways to see every column.</p>
+              <div className="-mx-1 overflow-x-auto px-1">
                 <table className="w-full min-w-[560px] text-sm">
                   <thead>
                     <tr className="text-left text-muted-foreground">
-                      <th className="pb-3 pr-2 font-medium">Sense</th>
+                      <th className="sticky left-0 z-10 bg-card pb-3 pr-2 font-medium">Sense</th>
                       {RESPONSE_TYPES.map((rt) => (
                         <th key={rt} className="pb-3 px-2 font-medium">
                           {RESPONSE_TYPE_LABEL[rt]}
@@ -732,7 +733,7 @@ export default function SensoryTool() {
                   <tbody>
                     {senseRows.map((row) => (
                       <tr key={row.name} className="border-t border-border">
-                        <td className="py-3 pr-2 align-middle font-medium text-foreground">{row.label}</td>
+                        <td className="sticky left-0 z-10 bg-card py-3 pr-2 align-middle font-medium text-foreground">{row.label}</td>
                         {RESPONSE_TYPES.map((rt) => {
                           const cell = row.cells[rt];
                           if (!cell) {

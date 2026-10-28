@@ -18,12 +18,12 @@ export function Footer() {
         paid version is available as the <a className="underline" href={premiumUrl('footer', toolId ?? 'home')}>full SEMH Toolkit</a>.
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
-        <Link className="underline hover:text-foreground" to="/privacy">Privacy Policy</Link>
-        <Link className="underline hover:text-foreground" to="/faq">FAQs</Link>
+        <Link className="inline-block py-2 underline hover:text-foreground" to="/privacy">Privacy Policy</Link>
+        <Link className="inline-block py-2 underline hover:text-foreground" to="/faq">FAQs</Link>
         {showCookieSettings && (
           <button
             type="button"
-            className="underline hover:text-foreground"
+            className="py-2 underline hover:text-foreground"
             onClick={() => (window as unknown as { googlefc?: { showRevocationMessage?: () => void } }).googlefc?.showRevocationMessage?.()}
           >
             Cookie settings
