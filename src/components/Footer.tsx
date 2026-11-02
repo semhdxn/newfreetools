@@ -31,6 +31,10 @@ export function Footer() {
         )}
         <span>© {new Date().getFullYear()} SEMH.co.uk</span>
       </div>
+      <p className="mt-4 border-t border-border pt-4">
+        WE-SEMH LTD. Company number 17438775. Registered address: 71-75 Shelton Street, Covent Garden, London,
+        United Kingdom, WC2H 9JQ.
+      </p>
     </footer>
   );
 }
