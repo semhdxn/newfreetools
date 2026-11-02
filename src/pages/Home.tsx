@@ -53,6 +53,11 @@ export default function Home() {
           behaviour and wellbeing, plus a chronology builder. No account, nothing uploaded: everything stays in your
           browser, and you download your results as a CSV.
         </p>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          Adverts help keep these basic tools free. If you'd like to store results over time, get an ad-free
+          experience and other benefits, visit{' '}
+          <a className="underline" href={premiumUrl('home_intro', 'home')}>toolkit.semh.co.uk</a>.
+        </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {TOOLS.map((tool) => {
