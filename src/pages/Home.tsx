@@ -49,8 +49,9 @@ export default function Home() {
             rendered once for every page in App.tsx — no need to repeat it here. */}
         <h1 className="font-display text-3xl font-extrabold sm:text-4xl">SEMH Free Tools</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Free questionnaires for sensory, behaviour and wellbeing, plus a chronology builder. No account, nothing uploaded:
-          everything stays in your browser, and you download your results as a CSV.
+          Provided by <a className="underline" href="https://semh.co.uk">SEMH.co.uk</a>: free questionnaires for sensory,
+          behaviour and wellbeing, plus a chronology builder. No account, nothing uploaded: everything stays in your
+          browser, and you download your results as a CSV.
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
