@@ -10,6 +10,7 @@ import { InterstitialGate } from '@/components/InterstitialGate';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
 import { premiumUrl } from '@/lib/links';
 import { ResultsUpgradeCard } from '@/components/ResultsUpgradeCard';
+import { ResultsFeedbackCard } from '@/components/ResultsFeedbackCard';
 import {
   Cohort,
   behaviourFunctions,
@@ -403,6 +404,7 @@ export default function BehaviourTool() {
         </div>
 
         <ResultsUpgradeCard tool="behaviour" />
+        <ResultsFeedbackCard tool="behaviour" />
 
         <AdBanner toolId="behaviour" slot={ADSENSE_SLOTS.resultsBanner} />
       </ToolShell>

@@ -18,6 +18,7 @@ import {
 import { downloadPdf } from '@/lib/mwm/generatePdf';
 import { trackEvent } from '@/lib/analytics';
 import { ResultsUpgradeCard } from '@/components/ResultsUpgradeCard';
+import { ResultsFeedbackCard } from '@/components/ResultsFeedbackCard';
 import CriteriaPicker from '@/components/mwm/CriteriaPicker';
 import SelectedCriteriaList from '@/components/mwm/SelectedCriteriaList';
 import CustomCriteriaForm from '@/components/mwm/CustomCriteriaForm';
@@ -513,6 +514,7 @@ export default function MwmTool() {
           </Card>
 
           <ResultsUpgradeCard tool="mwm" />
+          <ResultsFeedbackCard tool="mwm" />
 
           <AdBanner toolId="mwm" slot={ADSENSE_SLOTS.resultsBanner} />
         </div>

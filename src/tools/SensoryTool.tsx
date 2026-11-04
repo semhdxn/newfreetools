@@ -12,6 +12,7 @@ import { InterstitialGate } from '@/components/InterstitialGate';
 import { AffiliateDisclosureBanner, AreaProductGrid } from '@/components/AffiliateProducts';
 import { PremiumLockButton } from '@/components/PremiumLockButton';
 import { ResultsUpgradeCard } from '@/components/ResultsUpgradeCard';
+import { ResultsFeedbackCard } from '@/components/ResultsFeedbackCard';
 import { RefreshCw, CheckCircle, Download, AlertTriangle, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 
 interface SensoryState {
@@ -868,6 +869,7 @@ export default function SensoryTool() {
           </div>
 
           <ResultsUpgradeCard tool="sensory" />
+          <ResultsFeedbackCard tool="sensory" />
 
           <AdBanner toolId="sensory" slot={ADSENSE_SLOTS.resultsBanner} className="mt-2" />
         </div>

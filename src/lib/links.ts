@@ -13,6 +13,13 @@ export function premiumUrl(medium: string, campaign?: string, content?: string):
   return `${PREMIUM_URL}/?${params.toString()}`;
 }
 
+/** Contact/feedback form, hosted on the toolkit site rather than duplicated here. */
+export function contactUrl(medium: string, campaign?: string): string {
+  const params = new URLSearchParams({ utm_source: 'freetools', utm_medium: medium });
+  if (campaign) params.set('utm_campaign', campaign);
+  return `${PREMIUM_URL}/?${params.toString()}#/contact`;
+}
+
 /** The first path segment ("sensory", "behaviour", ...), or "home". */
 export const currentToolSlug = (): string =>
   (typeof window === 'undefined' ? '' : window.location.pathname.replace(/^\//, '').split('/')[0]) || 'home';
