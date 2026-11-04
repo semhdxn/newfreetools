@@ -31,6 +31,18 @@ export function Footer() {
         )}
         <span>© {new Date().getFullYear()} SEMH.co.uk</span>
       </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
+        <span>SEMH Toolkit (toolkit.semh.co.uk):</span>
+        <a className="inline-block py-2 underline hover:text-foreground" href="https://toolkit.semh.co.uk/#/privacy">
+          Privacy Policy
+        </a>
+        <a className="inline-block py-2 underline hover:text-foreground" href="https://toolkit.semh.co.uk/#/cookie-policy">
+          Cookie Policy
+        </a>
+        <a className="inline-block py-2 underline hover:text-foreground" href="https://toolkit.semh.co.uk/#/terms">
+          Terms of Service
+        </a>
+      </div>
       <p className="mt-4 border-t border-border pt-4">
         WE-SEMH LTD. Company number 17438775. Registered address: 71-75 Shelton Street, Covent Garden, London,
         United Kingdom, WC2H 9JQ.
