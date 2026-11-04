@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { GA_CONFIGURED, trackingEnabledFor } from '@/lib/analytics';
 import { TOOL_LABELS, type ToolId } from '@/lib/storage';
-import { premiumUrl } from '@/lib/links';
+import { premiumUrl, contactUrl } from '@/lib/links';
 
 export function Footer() {
   const slug = useLocation().pathname.replace(/^\//, '').split('/')[0];
@@ -20,6 +20,9 @@ export function Footer() {
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
         <Link className="inline-block py-2 underline hover:text-foreground" to="/privacy">Privacy Policy</Link>
         <Link className="inline-block py-2 underline hover:text-foreground" to="/faq">FAQs</Link>
+        <a className="inline-block py-2 underline hover:text-foreground" href={contactUrl('footer', toolId ?? 'home')}>
+          Contact us
+        </a>
         {showCookieSettings && (
           <button
             type="button"
