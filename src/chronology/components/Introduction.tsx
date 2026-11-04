@@ -66,6 +66,14 @@ export function Introduction({ hasData, onStart, onSample, onSkip }: Props) {
               A private way to turn a written history into a clear timeline. Everything is typed in here and
               drawn on this screen — nothing is uploaded, and nothing is remembered when the tab closes.
             </p>
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <button type="button" className="btn btn-primary" onClick={() => fadeTo(onStart)}>
+                Start step by step <ArrowRight size={15} />
+              </button>
+              <button type="button" className="btn" onClick={() => fadeTo(onSample)}>
+                <Sparkles size={15} /> Try a sample
+              </button>
+            </div>
             <TestingNotice className="max-w-prose" />
           </div>
 
