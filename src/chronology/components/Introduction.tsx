@@ -1,6 +1,6 @@
 import { TestingNotice } from "@/chronology/components/TestingNotice";
 import { useState } from "react";
-import { ArrowRight, Check, Download, FileText, Globe, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Download, FileText, Globe, Lock, Sparkles } from "lucide-react";
 
 interface Props {
   /** True when a chronology is already on screen (entered or imported). */
@@ -34,6 +34,7 @@ const CHECKS = [
 /** Landing screen shown when the app opens: what it does, how it works, and the privacy promise. */
 export function Introduction({ hasData, onStart, onSample, onSkip }: Props) {
   const [fading, setFading] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   /** Fade this screen out before handing over to the next one. */
   const fadeTo = (run: () => void) => {
@@ -88,44 +89,49 @@ export function Introduction({ hasData, onStart, onSample, onSkip }: Props) {
           </div>
 
           <div className="panel">
-            <h3 className="font-display text-lg font-bold">How it works</h3>
-            <ol className="mt-3 space-y-3">
-              {STEPS.map(([title, desc], i) => (
-                <li key={title} className="flex gap-3">
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">{i + 1}</span>
-                  <span className="min-w-0">
-                    <span className="block font-semibold">{title}</span>
-                    <span className="block text-sm text-muted-foreground">{desc}</span>
+            <button
+              type="button"
+              className="flex w-full items-center justify-between gap-3 text-left"
+              aria-expanded={showDetails}
+              onClick={() => setShowDetails((s) => !s)}
+            >
+              <h3 className="font-display text-lg font-bold">How it works &amp; what to know</h3>
+              <ChevronDown size={18} className={`shrink-0 text-muted-foreground transition-transform ${showDetails ? "rotate-180" : ""}`} />
+            </button>
+
+            {showDetails && (
+              <div className="mt-4 space-y-5">
+                <ol className="space-y-3">
+                  {STEPS.map(([title, desc], i) => (
+                    <li key={title} className="flex gap-3">
+                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">{i + 1}</span>
+                      <span className="min-w-0">
+                        <span className="block font-semibold">{title}</span>
+                        <span className="block text-sm text-muted-foreground">{desc}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+
+                <ul className="space-y-2.5 border-t pt-4">
+                  {CHECKS.map((c) => (
+                    <li key={c} className="flex gap-2.5 text-sm">
+                      <Check size={16} className="mt-0.5 shrink-0 text-accent" />
+                      <span className="min-w-0 text-muted-foreground">{c}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="flex items-start gap-2 border-t pt-4 text-xs text-muted-foreground">
+                  <Lock size={14} className="mt-0.5 shrink-0" />
+                  <span>
+                    No account, no upload: the page makes no network requests at all, so everything stays on this
+                    device until you export it. Treat the finished timeline as confidential — it contains
+                    sensitive personal information.
                   </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="panel">
-            <h3 className="font-display text-lg font-bold">Before you start</h3>
-            <ul className="mt-3 space-y-2.5">
-              {CHECKS.map((c) => (
-                <li key={c} className="flex gap-2.5 text-sm">
-                  <Check size={16} className="mt-0.5 shrink-0 text-accent" />
-                  <span className="min-w-0 text-muted-foreground">{c}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="panel flex items-start gap-3 border-notice bg-notice text-notice-foreground">
-            <Lock size={18} className="mt-0.5 shrink-0" />
-            <div className="space-y-1 text-sm">
-              <h3 className="font-display text-lg font-bold">Your privacy</h3>
-              <p>
-                There is no account and no upload. The page makes no network requests at all, so what you type
-                stays on this device and disappears when you close the tab. Your exported file is the only copy.
-              </p>
-              <p className="text-xs opacity-80">
-                Treat the finished timeline as confidential: it contains sensitive personal information.
-              </p>
-            </div>
+                </p>
+              </div>
+            )}
           </div>
 
           <p className="text-center text-xs text-muted-foreground">
