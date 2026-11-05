@@ -5,11 +5,13 @@ import { homeMoves, isMarker, totalsUpTo } from "@/chronology/lib/insights";
 import { ArrowRight, Ban, GraduationCap, Home, Route, Star, Users } from "lucide-react";
 import { WELLBEING_OPTIONS, reportCounts, wellbeingOf } from "@/chronology/lib/wellbeing";
 
-export type TimelineView = "lanes" | "story";
+export type TimelineView = "numbered" | "lanes" | "story";
 
 const PX_PER_YEAR = 120;
 const ROW_H = 34;
 const LANE_LABEL_W = 180;
+const TYPE_LABEL_W = 150;
+const TYPE_ROW_H = 30;
 const AXIS_H = 44;
 export const AGE_BANDS = [
   { from: 0, to: 5, name: "Early years", tone: "family" },
@@ -443,6 +445,105 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
     </div>
   );
 
+  /* ---------- numbered view: one lane per type, numbered badges + a key below ---------- */
+  const typeLanes = visibleCats.flatMap((c) => {
+    const types = [...new Set(visible.filter((e) => e.category === c.id).map((e) => e.type))];
+    return types.map((type) => ({ c, type, evs: visible.filter((e) => e.category === c.id && e.type === type) }));
+  });
+  const badgeColour = (id: string) => `color-mix(in oklab, ${col(id)} 70%, hsl(var(--foreground)))`;
+
+  const numberedLegend = (
+    <div className="mb-2 flex flex-wrap items-center gap-4 text-[10px] text-muted-foreground" style={{ marginLeft: TYPE_LABEL_W }}>
+      <span className="inline-flex items-center gap-1.5"><span className="inline-block h-3.5 w-3.5 rounded-full border-2 border-muted-foreground" /> Single event</span>
+      <span className="inline-flex items-center gap-1.5"><span className="inline-block h-1.5 w-5 rounded-full border border-muted-foreground bg-muted" /> Period</span>
+      <span className="inline-flex items-center gap-1.5"><span className="inline-block h-1.5 w-5 rounded-full border border-dashed border-muted-foreground bg-muted" /> Ongoing / approximate</span>
+      <span className="inline-flex items-center gap-1.5"><span className="inline-block h-3.5 w-3.5 rounded-full border-[3px] border-muted-foreground" /> High significance</span>
+    </div>
+  );
+
+  const numberedView = (
+    <div className="flex">
+      <div style={{ width: TYPE_LABEL_W }} className="shrink-0">
+        <div style={{ height: AXIS_H }} />
+        {visibleCats.map((c) => {
+          const lanes = typeLanes.filter((l) => l.c.id === c.id);
+          if (!lanes.length) return null;
+          const Icon = categoryIcon(c.id);
+          return (
+            <div key={c.id}>
+              <div className="flex h-6 items-center gap-1.5 text-[11px] font-semibold">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-card" style={{ backgroundColor: col(c.id) }}><Icon size={11} /></span>
+                <span className="truncate">{c.name}</span>
+              </div>
+              {lanes.map(({ type }) => (
+                <div key={type} style={{ height: TYPE_ROW_H }} className="flex items-center truncate pl-6 text-[10px] text-muted-foreground">{type}</div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+      <div className="relative" style={{ width: width + (simple ? 30 : 180) }}>
+        <div>{Axis}</div>
+        <BandBg />
+        <TodayLine />
+        {visibleCats.map((c) => {
+          const lanes = typeLanes.filter((l) => l.c.id === c.id);
+          if (!lanes.length) return null;
+          return (
+            <div key={c.id}>
+              <div style={{ height: 24 }} />
+              {lanes.map(({ type, evs }) => (
+                <div key={type} className="relative" style={{ height: TYPE_ROW_H }}>
+                  {evs.map((e) => {
+                    const x1 = x(e.start), x2 = e.ongoing ? x(today) : e.end ? x(e.end) : x1;
+                    const isRange = x2 > x1 + 1;
+                    const high = e.significance === "high";
+                    const low = e.significance === "low";
+                    const dashed = e.approximate || e.ongoing;
+                    const title = `${eventNumber(e)}. ${e.type}: ${displayLabel(e)}\n${dateText(e)}`;
+                    return (
+                      <span key={e.id}>
+                        {isRange && (
+                          <span className={`absolute top-[9px] h-3 rounded-full border ${dashed ? "border-dashed" : ""}`}
+                            style={{ left: x1, width: x2 - x1, backgroundColor: tint(c.id, 20), borderColor: col(c.id), opacity: low ? 0.55 : 1 }} />
+                        )}
+                        <button type="button" title={title} onClick={() => onSelect?.(e)}
+                          className="absolute top-0.5 flex items-center justify-center rounded-full text-[10px] font-bold shadow-badge"
+                          style={{
+                            left: x1, transform: "translateX(-50%)", width: high ? 24 : 22, height: high ? 24 : 22,
+                            color: badgeColour(c.id), backgroundColor: tint(c.id, 16),
+                            border: `${high ? 2.5 : 1.5}px ${dashed ? "dashed" : "solid"} ${col(c.id)}`, opacity: low ? 0.6 : 1,
+                          }}>
+                          {eventNumber(e)}
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  const numberedKey = (
+    <div className="mt-3 max-w-[1400px] border-t pt-1 text-[11px]">
+      {visible.map((e) => (
+        <div key={e.id} className="flex items-center gap-2.5 border-b py-1.5 last:border-b-0">
+          <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border font-bold"
+            style={{ borderColor: col(e.category), backgroundColor: tint(e.category, 16), color: badgeColour(e.category) }}>
+            {eventNumber(e)}
+          </span>
+          <span className="w-20 shrink-0 text-muted-foreground">{dateText(e)}</span>
+          <span className="w-48 shrink-0 truncate text-muted-foreground">{catById(e.category).name} · {e.type}</span>
+          <span className="min-w-0 truncate">{displayLabel(e)}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   const focusText = focus ? `Showing ${Math.floor(focus[0])}–${Math.ceil(focus[1])}` : "";
 
   return (
@@ -477,7 +578,13 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
       </div>
 
       {simple && <p className="mb-2 text-xs">{counts.homeMoves} home moves · {counts.educationChanges} education changes · {counts.significantEvents} high-significance events · {counts.unassessed} wellbeing impacts unassessed</p>}
-      <div className="w-max" data-tl-body data-label-w={view === "lanes" || simple ? LANE_LABEL_W : 0}>{view === "lanes" || simple ? lanesView : <>{storyView}<div className="mt-2 text-[11px] font-semibold">Wellbeing impact</div>{WellbeingStrip}</>}</div>
+      <div className="w-max" data-tl-body data-label-w={view === "lanes" || simple ? LANE_LABEL_W : 0}>
+        {view === "lanes" || simple
+          ? lanesView
+          : view === "story"
+            ? <>{storyView}<div className="mt-2 text-[11px] font-semibold">Wellbeing impact</div>{WellbeingStrip}</>
+            : <>{numberedLegend}{numberedView}{wellbeingH > 0 && <div style={{ marginLeft: TYPE_LABEL_W }}><div className="mt-2 text-[11px] font-semibold">Wellbeing impact</div>{WellbeingStrip}</div>}{numberedKey}</>}
+      </div>
 
       {simple && <div data-report-labels className="mt-2 grid max-w-[1400px] grid-cols-3 gap-x-5 gap-y-1 border-t pt-2 text-[10px]">
         {visible.map((e) => <span key={e.id}><b>{eventNumber(e)}.</b> {displayLabel(e)}</span>)}

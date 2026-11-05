@@ -34,7 +34,7 @@ export default function ChronologyTool() {
   const [dragging, setDragging] = useState(false);
   const [paper, setPaper] = useState<"a4" | "a3">("a4");
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState<TimelineView>("lanes");
+  const [view, setView] = useState<TimelineView>("numbered");
   const [hideLow, setHideLow] = useState(false);
   const [simple, setSimple] = useState(false);
   const [focus, setFocus] = useState("all");
@@ -390,9 +390,9 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
         <section className="panel space-y-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex overflow-hidden rounded-full border" role="group" aria-label="Timeline style">
-              {(["lanes", "story"] as const).map((v) => (
+              {(["numbered", "lanes", "story"] as const).map((v) => (
                 <button key={v} className={`px-4 py-1.5 text-sm font-medium ${view === v ? "bg-primary text-primary-foreground" : "bg-card hover:bg-secondary"}`} onClick={() => setView(v)}>
-                  {v === "lanes" ? "Category lanes" : "Story path"}
+                  {v === "numbered" ? "Numbered" : v === "lanes" ? "Category lanes" : "Story path"}
                 </button>
               ))}
             </span>
