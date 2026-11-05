@@ -578,16 +578,16 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
       </div>
 
       {simple && <p className="mb-2 text-xs">{counts.homeMoves} home moves · {counts.educationChanges} education changes · {counts.significantEvents} high-significance events · {counts.unassessed} wellbeing impacts unassessed</p>}
-      <div className="w-max" data-tl-body data-label-w={view === "lanes" || simple ? LANE_LABEL_W : 0}>
-        {view === "lanes" || simple
+      <div className="w-max" data-tl-body data-label-w={view === "lanes" ? LANE_LABEL_W : view === "numbered" ? TYPE_LABEL_W : 0}>
+        {view === "lanes"
           ? lanesView
           : view === "story"
             ? <>{storyView}<div className="mt-2 text-[11px] font-semibold">Wellbeing impact</div>{WellbeingStrip}</>
-            : <>{numberedLegend}{numberedView}{wellbeingH > 0 && <div style={{ marginLeft: TYPE_LABEL_W }}><div className="mt-2 text-[11px] font-semibold">Wellbeing impact</div>{WellbeingStrip}</div>}{numberedKey}</>}
+            : <>{!simple && numberedLegend}{numberedView}{wellbeingH > 0 && <div style={{ marginLeft: TYPE_LABEL_W }}><div className="mt-2 text-[11px] font-semibold">Wellbeing impact</div>{WellbeingStrip}</div>}{!simple && numberedKey}</>}
       </div>
 
       {simple && <div data-report-labels className="mt-2 grid max-w-[1400px] grid-cols-3 gap-x-5 gap-y-1 border-t pt-2 text-[10px]">
-        {visible.map((e) => <span key={e.id}><b>{eventNumber(e)}.</b> {displayLabel(e)}</span>)}
+        {visible.map((e) => <span key={e.id}><b>{eventNumber(e)}.</b> {dateText(e)} — {catById(e.category).name} · {e.type}: {displayLabel(e)}</span>)}
       </div>}
 
       {visible.length > 0 && (
