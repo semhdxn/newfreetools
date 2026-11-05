@@ -446,9 +446,23 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
   );
 
   /* ---------- numbered view: one lane per type, numbered badges + a key below ---------- */
+  /** Categories condensed onto a single line: bars for enrolment-type events, small icons for everything else. */
+  const CONDENSED_CATS = new Set(["education", "living"]);
+  const BAR_TYPES_BY_CAT: Record<string, Set<string> | "all"> = {
+    education: new Set(["started school", "changed school"]),
+    living: "all",
+  };
+  const isBarType = (catId: string, type: string) => {
+    const rule = BAR_TYPES_BY_CAT[catId];
+    return rule === "all" || !!rule?.has(type.trim().toLowerCase());
+  };
   const typeLanes = visibleCats.flatMap((c) => {
+    if (CONDENSED_CATS.has(c.id)) {
+      const evs = visible.filter((e) => e.category === c.id);
+      return evs.length ? [{ c, type: null as string | null, evs }] : [];
+    }
     const types = [...new Set(visible.filter((e) => e.category === c.id).map((e) => e.type))];
-    return types.map((type) => ({ c, type, evs: visible.filter((e) => e.category === c.id && e.type === type) }));
+    return types.map((type) => ({ c, type: type as string | null, evs: visible.filter((e) => e.category === c.id && e.type === type) }));
   });
   const badgeColour = (id: string) => `color-mix(in oklab, ${col(id)} 70%, hsl(var(--foreground)))`;
 
@@ -475,8 +489,8 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
                 <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-card" style={{ backgroundColor: col(c.id) }}><Icon size={11} /></span>
                 <span className="truncate">{c.name}</span>
               </div>
-              {lanes.map(({ type }) => (
-                <div key={type} style={{ height: TYPE_ROW_H }} className="flex items-center truncate pl-6 text-[10px] text-muted-foreground">{type}</div>
+              {lanes.map(({ type }, i) => (
+                <div key={type ?? i} style={{ height: TYPE_ROW_H }} className="flex items-center truncate pl-6 text-[10px] text-muted-foreground">{type ?? ""}</div>
               ))}
             </div>
           );
@@ -492,8 +506,10 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
           return (
             <div key={c.id}>
               <div style={{ height: 24 }} />
-              {lanes.map(({ type, evs }) => (
-                <div key={type} className="relative" style={{ height: TYPE_ROW_H }}>
+              {lanes.map(({ type, evs }, laneI) => {
+                const laneTypes = type === null ? [...new Set(evs.map((e) => e.type.trim().toLowerCase()))] : [];
+                return (
+                <div key={type ?? laneI} className="relative" style={{ height: TYPE_ROW_H }}>
                   {evs.map((e) => {
                     const x1 = x(e.start), x2 = e.ongoing ? x(today) : e.end ? x(e.end) : x1;
                     const isRange = x2 > x1 + 1;
@@ -501,11 +517,28 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
                     const low = e.significance === "low";
                     const dashed = e.approximate || e.ongoing;
                     const title = `${eventNumber(e)}. ${e.type}: ${displayLabel(e)}\n${dateText(e)}`;
+                    const shadeIdx = type === null ? laneTypes.indexOf(e.type.trim().toLowerCase()) : 0;
+                    const barFill = type === null ? tint(c.id, 22 + shadeIdx * 11) : tint(c.id, 20);
+
+                    if (type === null && !isBarType(c.id, e.type)) {
+                      const Icon = iconFor(c.id, e.type);
+                      return (
+                        <button type="button" key={e.id} title={title} onClick={() => onSelect?.(e)}
+                          className="absolute flex items-center justify-center rounded-full shadow-badge"
+                          style={{
+                            left: x1, top: 4, transform: "translateX(-50%)", width: high ? 20 : 18, height: high ? 20 : 18,
+                            color: "hsl(var(--card))", backgroundColor: col(c.id),
+                            border: `${high ? 2 : 1}px ${dashed ? "dashed" : "solid"} ${col(c.id)}`, opacity: low ? 0.6 : 1,
+                          }}>
+                          <Icon size={high ? 12 : 10} />
+                        </button>
+                      );
+                    }
                     return (
                       <span key={e.id}>
                         {isRange && (
                           <span className={`absolute top-[9px] h-3 rounded-full border ${dashed ? "border-dashed" : ""}`}
-                            style={{ left: x1, width: x2 - x1, backgroundColor: tint(c.id, 20), borderColor: col(c.id), opacity: low ? 0.55 : 1 }} />
+                            style={{ left: x1, width: x2 - x1, backgroundColor: barFill, borderColor: col(c.id), opacity: low ? 0.55 : 1 }} />
                         )}
                         <button type="button" title={title} onClick={() => onSelect?.(e)}
                           className="absolute top-0.5 flex items-center justify-center rounded-full text-[10px] font-bold shadow-badge"
@@ -520,7 +553,8 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
                     );
                   })}
                 </div>
-              ))}
+                );
+              })}
             </div>
           );
         })}
