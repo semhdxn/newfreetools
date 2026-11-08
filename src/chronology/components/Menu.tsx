@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 /** Lightweight disclosure menu. Closes on outside click, Escape, or item click. */
-export function Menu({ label, icon, badge, children }: { label: string; icon?: ReactNode; badge?: ReactNode; children: (close: () => void) => ReactNode }) {
+export function Menu({ label, icon, badge, className, children }: { label: string; icon?: ReactNode; badge?: ReactNode; className?: string; children: (close: () => void) => ReactNode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -15,7 +15,7 @@ export function Menu({ label, icon, badge, children }: { label: string; icon?: R
   }, [open]);
   return (
     <div ref={ref} className="relative">
-      <button type="button" className="btn" aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((o) => !o)}>
+      <button type="button" className={className ? `btn ${className}` : "btn"} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((o) => !o)}>
         {icon}{label}{badge}<ChevronDown size={14} />
       </button>
       {open && (

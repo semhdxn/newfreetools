@@ -6,6 +6,7 @@ import { MonthYearInput } from "@/chronology/components/MonthYearInput";
 import { ChipSelect, EVENT_OR_PERIOD, SIGNIFICANCE_OPTIONS } from "@/chronology/components/ChipSelect";
 import { WellbeingInput } from "@/chronology/components/WellbeingInput";
 import { wellbeingOf, type WellbeingImpact } from "@/chronology/lib/wellbeing";
+import { iconFor } from "@/chronology/lib/icons";
 
 const QUESTIONS: Record<string, string> = {
   living: "Where has the young person lived? Add each home or placement move.",
@@ -92,7 +93,8 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
   const go = (n: number) => fadeTo(() => applyStep(n));
 
 
-  const startEntry = () => fadeTo(() => {
+  const startEntry = (t?: string) => fadeTo(() => {
+    if (t) setType(t);
     // Follow on from the latest entry in this section
     const prev = inCat[inCat.length - 1];
     if (prev) setDate(prev.end || prev.start);
@@ -274,8 +276,24 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
                     {inCat.length ? `You have ${inCat.length} ${inCat.length === 1 ? one : many}. Add more?` : `Do you want to add ${many}?`}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <button type="button" className="btn btn-primary" onClick={startEntry}><Check size={15} /> Yes</button>
+                    <button type="button" className="btn btn-primary" onClick={() => startEntry()}><Check size={15} /> Yes</button>
                     <button type="button" className="btn" onClick={() => go(step + 1)}>No, {nextName ? `next: ${nextName}` : "continue"}</button>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-medium text-muted-foreground">Or jump straight to one of these:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {types.map((t) => {
+                        const Icon = iconFor(cat!.id, t);
+                        return (
+                          <button key={t} type="button" onClick={() => startEntry(t)}
+                            className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:brightness-95"
+                            style={{ borderColor: `var(--cat-${cat!.id})`, backgroundColor: `color-mix(in oklab, var(--cat-${cat!.id}) 14%, hsl(var(--card)))` }}>
+                            <Icon size={14} style={{ color: `var(--cat-${cat!.id})` }} />
+                            {t}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
@@ -286,7 +304,7 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
                   </p>
                   <p className="text-lg font-bold">Add another {one}?</p>
                   <div className="flex flex-wrap gap-2">
-                    <button type="button" className="btn btn-primary" onClick={startEntry}><Plus size={15} /> Yes, add another</button>
+                    <button type="button" className="btn btn-primary" onClick={() => startEntry()}><Plus size={15} /> Yes, add another</button>
                     <button type="button" className="btn" onClick={() => go(step + 1)}>No, {nextName ? `next: ${nextName}` : "continue"}</button>
                   </div>
                 </div>
@@ -371,11 +389,13 @@ export function GuidedEntry({ person, onPerson, events, onAdd, onUpdate, step, o
           </div>
           <div className="flex items-center justify-between gap-2">
             <button type="button" className="btn" disabled={step === 0} onClick={() => go(step - 1)}><ArrowLeft size={15} /> Back</button>
-            {last
-              ? <button type="button" className="btn btn-primary" onClick={() => fadeTo(onFinish)}><Check size={15} /> Finish and view timeline</button>
-              : <button type="button" className="btn btn-primary min-w-0" onClick={() => go(step + 1)}>
-                  <span className="truncate">{cat && !inCat.length ? "Skip" : "Next"}: {nextName}</span> <ArrowRight size={15} />
-                </button>}
+            {last ? (
+              <button type="button" className="btn btn-primary" onClick={() => fadeTo(onFinish)}><Check size={15} /> Finish and view timeline</button>
+            ) : cat && view === "ask" ? null : (
+              <button type="button" className={`btn min-w-0 ${phase === "entry" ? "" : "btn-primary"}`} onClick={() => go(step + 1)}>
+                <span className="truncate">{cat && !inCat.length ? "Skip" : "Next"}: {nextName}</span> <ArrowRight size={15} />
+              </button>
+            )}
           </div>
         </div>
       </footer>

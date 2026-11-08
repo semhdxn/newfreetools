@@ -34,7 +34,7 @@ export default function ChronologyTool() {
   const [dragging, setDragging] = useState(false);
   const [paper, setPaper] = useState<"a4" | "a3">("a4");
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState<TimelineView>("numbered");
+  const [view, setView] = useState<TimelineView>("lanes");
   const [hideLow, setHideLow] = useState(false);
   const [simple, setSimple] = useState(false);
   const [focus, setFocus] = useState("all");
@@ -173,32 +173,25 @@ export default function ChronologyTool() {
       const headH = 15.5;
       const availH = ph - m * 2 - headH;
       const bw = body.scrollWidth * R, bh = body.scrollHeight * R;
-      const lw = Number(body.dataset["labelW"] || 0) * R, contentW = bw - lw;
-      // Fill the full page height first, then split the date range across as few pages as needed to also fit the width.
-      const scale = availH / bh;
+      // Maximise the whole timeline onto this one page rather than splitting it across several.
+      const scale = Math.min(availW / bw, availH / bh);
       if (scale <= 0) throw new Error("Report too large");
-      const perPagePx = Math.floor(availW / scale) - lw;
-      if (perPagePx <= 0) throw new Error("Report too large");
-      const pages = Math.min(6, Math.ceil(contentW / perPagePx));
-      const per = Math.ceil(contentW / pages);
       const visible = sorted.filter((e) => !hidden.has(e.category) && !(hideLow && e.significance === "low")).filter((e) => !focusRange || (Number(e.start.slice(0, 4)) < focusRange[1] && Number((e.end || e.start).slice(0, 4)) + 1 > focusRange[0]));
       const n = reportCounts(visible);
-      for (let p = 0; p < pages; p++) {
-        if (p > 0) pdf.addPage();
-        pdf.setFontSize(12);
-        pdf.text(`Chronology overview: ${person.label || "-"}${pages > 1 ? ` (timeline ${p + 1} of ${pages})` : ""}`, m, m + 4.5);
-        pdf.setFontSize(8);
-        pdf.text(`${person.dob ? `DOB: ${formatDate(person.dob, person.dobPrecision)} · ` : ""}Prepared by: ${person.preparedBy || "-"} · Date prepared: ${formatDate(todayISO(), "day")}`, m, m + 8.5);
-        pdf.text(`${n.homeMoves} home moves | ${n.educationChanges} education changes | ${n.significantEvents} high-significance events | ${n.unassessed} wellbeing impacts unassessed`, m, m + 12.5);
-        const w = Math.min(per, contentW - p * per), c = document.createElement("canvas");
-        c.width = lw + w; c.height = bh;
+      pdf.setFontSize(12);
+      pdf.text(`Chronology overview: ${person.label || "-"}`, m, m + 4.5);
+      pdf.setFontSize(8);
+      pdf.text(`${person.dob ? `DOB: ${formatDate(person.dob, person.dobPrecision)} · ` : ""}Prepared by: ${person.preparedBy || "-"} · Date prepared: ${formatDate(todayISO(), "day")}`, m, m + 8.5);
+      pdf.text(`${n.homeMoves} home moves | ${n.educationChanges} education changes | ${n.significantEvents} high-significance events | ${n.unassessed} wellbeing impacts unassessed`, m, m + 12.5);
+      {
+        const c = document.createElement("canvas");
+        c.width = bw; c.height = bh;
         const ctx = c.getContext("2d");
         if (!ctx) throw new Error("Cannot create report image");
         ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
         const bx = (br.left - sr.left) * R, by = (br.top - sr.top) * R;
-        if (lw) ctx.drawImage(img, bx, by, lw, bh, 0, 0, lw, bh);
-        ctx.drawImage(img, bx + lw + p * per, by, w, bh, lw, 0, w, bh);
-        pdf.addImage(c.toDataURL("image/jpeg", 0.88), "JPEG", m, m + headH, c.width * scale, bh * scale, undefined, "FAST");
+        ctx.drawImage(img, bx, by, bw, bh, 0, 0, bw, bh);
+        pdf.addImage(c.toDataURL("image/jpeg", 0.88), "JPEG", m, m + headH, bw * scale, bh * scale, undefined, "FAST");
         footer();
       }
 
@@ -361,25 +354,26 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
             </div>
           </section>
         ) : (
-          <section className="panel flex flex-wrap items-center gap-x-4 gap-y-1 py-2.5 text-sm">
-            <span className="font-semibold">{person.label || "No reference set"}</span>
-            <span className="text-muted-foreground">{person.dob ? `Born ${formatDate(person.dob, person.dobPrecision)}` : "No date of birth"}</span>
-            <span className="text-muted-foreground">{person.preparedBy ? `Prepared by ${person.preparedBy}` : "No preparer set"}</span>
+          <section className="panel flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
+            <span className="text-lg font-extrabold">{person.label || "No reference set"}</span>
+            <span className="text-sm text-muted-foreground">{person.dob ? `Born ${formatDate(person.dob, person.dobPrecision)}` : "No date of birth"}</span>
+            <span className="text-sm text-muted-foreground">{person.preparedBy ? `Prepared by ${person.preparedBy}` : "No preparer set"}</span>
             <button type="button" className="btn ml-auto h-8 px-2.5" aria-expanded={false} onClick={() => setShowPerson(true)}><Pencil size={14} /> Change details</button>
           </section>
         )}
 
         <section className="flex flex-wrap items-center gap-2">
-          <Menu label="Save / Load" icon={<FileText size={15} />} badge={dirty && hasData ? <span className="h-2 w-2 rounded-full bg-warning" title="Unsaved changes" /> : null}>
+          <Menu label="Save / Load" icon={<FileText size={15} />} className="btn-strong" badge={dirty && hasData ? <span className="h-2 w-2 rounded-full bg-warning" title="Unsaved changes" /> : null}>
             {(close) => (<>
               <MenuItem icon={<Download size={15} />} disabled={!hasData} hint={dirty && hasData ? "You have unsaved changes" : "Keep a copy on this device"} onClick={() => { close(); exportCSV(); }}>Export CSV</MenuItem>
               <MenuItem icon={<Upload size={15} />} hint="Or drag a CSV onto the page" onClick={() => { close(); fileRef.current?.click(); }}>Import CSV</MenuItem>
               <MenuItem icon={<FileText size={15} />} onClick={() => { close(); downloadBlob(templateCSV(), "timeline_template.csv"); }}>Download blank template</MenuItem>
               <MenuItem icon={<Sparkles size={15} />} hint="Fictional data for demonstrations and testing" onClick={() => { close(); loadSample(); }}>Load a sample timeline</MenuItem>
+              <MenuItem icon={<Trash2 size={15} />} disabled={!hasData} hint="Clear the young person's details and every event" onClick={() => { close(); clearAll(); }}>Clear all</MenuItem>
             </>)}
           </Menu>
           <input ref={fileRef} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => readFile(e.target.files?.[0])} />
-          <Menu label="Download / Print" icon={<Printer size={15} />}>
+          <Menu label="Download / Print" icon={<Printer size={15} />} className="btn-strong">
             {(close) => (<>
               <div className="px-2.5 pb-2 pt-1">
                 <span className="label">Paper size</span>
@@ -395,20 +389,36 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
           </Menu>
           {dirty && hasData && <span className="hidden text-xs text-warning sm:inline">Unsaved changes. Export CSV to keep them.</span>}
           <span className="flex-1" />
-          <button type="button" className="btn btn-primary" onClick={() => setMode("guided")}>Back to step by step</button>
-          <button className="btn btn-danger" onClick={clearAll} disabled={!hasData}><Trash2 size={15} /> Clear all</button>
+          <button type="button" className="btn" onClick={() => setMode("guided")}>Back to step by step</button>
         </section>
 
-        <section className="panel space-y-3">
+        {dragging && (
+          <div className="rounded-xl border-2 border-dashed border-primary bg-accent/10 p-6 text-center text-sm">Drop CSV to import (read on this device only)</div>
+        )}
+
+        {!events.length && (
+          <div className="panel space-y-3 text-center text-sm text-muted-foreground">
+            <p>No events yet. Use "Add an event" below, or drag a CSV file anywhere onto this page to import it.</p>
+            <button type="button" className="btn btn-primary" onClick={loadSample}><Sparkles size={15} /> Load a sample timeline</button>
+          </div>
+        )}
+          </>
+        )}
+      </main>
+
+      {!showAdd && hasData && (
+      <div className="mx-auto max-w-7xl px-4 pb-4">
+        <div className="panel space-y-3">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex overflow-hidden rounded-full border" role="group" aria-label="Timeline style">
-              {(["numbered", "lanes", "story"] as const).map((v) => (
-                <button key={v} className={`px-4 py-1.5 text-sm font-medium ${view === v ? "bg-primary text-primary-foreground" : "bg-card hover:bg-secondary"}`} onClick={() => setView(v)}>
-                  {v === "numbered" ? "Numbered" : v === "lanes" ? "Category lanes" : "Story path"}
+            <span className="text-sm font-semibold text-muted-foreground">View</span>
+            <span className="inline-flex overflow-hidden rounded-full border-2 border-primary/20" role="group" aria-label="Timeline style">
+              {(["lanes", "story", "numbered"] as const).map((v) => (
+                <button key={v} className={`px-5 py-2 text-sm font-bold transition-colors ${view === v ? "bg-primary text-primary-foreground" : "bg-card hover:bg-secondary"}`} onClick={() => setView(v)}>
+                  {v === "lanes" ? "Simple" : v === "story" ? "Story" : "Detailed"}
                 </button>
               ))}
             </span>
-            <span className="text-xs text-muted-foreground">Tap a category to show or hide it (also applies to downloads).</span>
+            <span className="text-xs text-muted-foreground">Tap a category below to show or hide it (also applies to downloads).</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((c) => {
@@ -452,25 +462,8 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
             </button>
             <span className="text-xs text-muted-foreground">What you see here is what goes into downloads.</span>
           </div>
-        </section>
-
-        {dragging && (
-          <div className="rounded-xl border-2 border-dashed border-primary bg-accent/10 p-6 text-center text-sm">Drop CSV to import (read on this device only)</div>
-        )}
-
-        {!events.length && (
-          <div className="panel space-y-3 text-center text-sm text-muted-foreground">
-            <p>No events yet. Use "Add an event" below, or drag a CSV file anywhere onto this page to import it.</p>
-            <button type="button" className="btn btn-primary" onClick={loadSample}><Sparkles size={15} /> Load a sample timeline</button>
-          </div>
-        )}
-          </>
-        )}
-      </main>
-
-      {!showAdd && (
-      <div className="mx-auto max-w-7xl px-4 pb-4">
-        <div className="overflow-x-auto rounded-xl border shadow-card">
+        </div>
+        <div className="mt-3 overflow-x-auto rounded-xl border shadow-card">
           <TimelineSheet ref={sheetRef} person={redact?.person ?? person} events={redact ? events.map(redact.clean) : events} hidden={hidden} view={view} hideLow={hideLow} focus={focusRange} simple={simple} onSelect={(e) => setEditing(e)} />
         </div>
         {events.length > 0 && (

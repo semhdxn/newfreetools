@@ -224,6 +224,8 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
       : [];
     const top = markers.length ? 22 : 0;
     const bottom = laneMoves.length ? 20 : 0;
+    // Living arrangements and Education are continuous — only one can apply at a time — so they always sit on a single line.
+    const singleRow = PERIOD_CATS.includes(c.id);
     const rowEnds: number[] = [];
     const placed = (simple ? all : evs).map((e) => {
       const x1 = x(e.start);
@@ -233,11 +235,13 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
       const cardW = simple ? 46 : period ? 0 : 40 + Math.min(displayLabel(e).length, 24) * 6.2;
       const extent = Math.max(x2, x1 + cardW);
       let row = 0;
-      while ((rowEnds[row] ?? -1e9) > x1 - 10) row++;
-      rowEnds[row] = extent;
+      if (!singleRow) {
+        while ((rowEnds[row] ?? -1e9) > x1 - 10) row++;
+        rowEnds[row] = extent;
+      }
       return { e, x1, x2, row, period, cardW };
     });
-    const rows = Math.max(rowEnds.length, evs.length || !markers.length ? 1 : 0);
+    const rows = singleRow ? 1 : Math.max(rowEnds.length, evs.length || !markers.length ? 1 : 0);
     return { c, placed, markers, laneMoves, gaps, top, bottom, h: rows * ROW_H + 4 + top + bottom };
   });
 
@@ -327,7 +331,6 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
                     <Badge e={e} size={24} />
                     <span className="min-w-0 leading-tight">
                       <span className="block truncate text-[11px] font-semibold">{simple ? eventNumber(e) : displayLabel(e)}</span>
-                      {!simple && <span className="block truncate text-[9px] opacity-85">{dateText(e)}</span>}
                     </span>
                     {e.ongoing && <span className="absolute right-1 top-1/2 h-0 w-0 -translate-y-1/2 border-y-[6px] border-l-[8px] border-y-transparent" style={{ borderLeftColor: "hsl(var(--card))" }} />}
                   </button>
@@ -346,7 +349,6 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
                     <Badge e={e} />
                     <span className="min-w-0 rounded px-1 text-left" style={{ backgroundColor: "color-mix(in oklab, hsl(var(--card)) 80%, transparent)", maxWidth: simple ? 24 : cardW - 54 }}>
                       <span className={`block truncate text-[11px] leading-tight ${high ? "font-bold" : "font-semibold"}`}>{simple ? eventNumber(e) : displayLabel(e)}</span>
-                      {!simple && <span className="block truncate text-[9px] text-muted-foreground">{dateText(e)}</span>}
                     </span>
                   </span>
                 </button>
@@ -435,8 +437,6 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
               <span className={`block w-full rounded-xl border border-t-4 px-2.5 py-1.5 shadow-card ${high ? "" : "bg-card"}`}
                 style={{ borderColor: high ? "color-mix(in oklab, hsl(var(--primary)) 40%, hsl(var(--card)))" : "hsl(var(--border))", borderTopColor: col(e.category), backgroundColor: high ? tint(e.category, 14) : undefined }}>
                 <span className={`block text-[11px] leading-tight ${high ? "font-bold" : "font-semibold"}`}>{displayLabel(e)}</span>
-                {!simple && <span className="block text-[9px] text-muted-foreground">{dateText(e)}</span>}
-                {high && e.note && <span className="mt-0.5 line-clamp-2 block text-[9px] leading-snug">{e.note}</span>}
               </span>
             </button>
           </div>
@@ -563,15 +563,15 @@ export const TimelineSheet = forwardRef<HTMLDivElement, Props>(function Timeline
   );
 
   const numberedKey = (
-    <div className="mt-3 max-w-[1400px] border-t pt-1 text-[11px]">
+    <div className="mt-3 grid max-w-[1400px] grid-cols-1 gap-x-6 border-t pt-1 text-[11px] sm:grid-cols-2">
       {visible.map((e) => (
-        <div key={e.id} className="flex items-center gap-2.5 border-b py-1.5 last:border-b-0">
+        <div key={e.id} className="flex items-center gap-2.5 border-b py-1.5">
           <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border font-bold"
             style={{ borderColor: col(e.category), backgroundColor: tint(e.category, 16), color: badgeColour(e.category) }}>
             {eventNumber(e)}
           </span>
-          <span className="w-20 shrink-0 text-muted-foreground">{dateText(e)}</span>
-          <span className="w-48 shrink-0 truncate text-muted-foreground">{catById(e.category).name} · {e.type}</span>
+          <span className="w-16 shrink-0 text-muted-foreground">{dateText(e)}</span>
+          <span className="w-36 shrink-0 truncate text-muted-foreground">{catById(e.category).name} · {e.type}</span>
           <span className="min-w-0 truncate">{displayLabel(e)}</span>
         </div>
       ))}
