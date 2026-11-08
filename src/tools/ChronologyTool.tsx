@@ -305,11 +305,12 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
 
   return (
     <div
-      className={`chron min-h-screen ${!showAdd && mode === "timeline" ? "pb-20" : ""}`}
+      className={`chron ${mode === "timeline" ? `min-h-screen ${!showAdd ? "pb-20" : ""}` : ""}`}
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
       onDragLeave={(e) => { if (e.currentTarget === e.target) setDragging(false); }}
       onDrop={(e) => { e.preventDefault(); setDragging(false); readFile(e.dataTransfer.files[0]); }}
     >
+      {mode === "timeline" && (<>
       <header className="no-print border-b bg-card">
         <div className="mx-auto max-w-7xl space-y-3 px-4 py-4">
           <Link to="/" className="inline-block text-sm font-medium text-muted-foreground hover:text-foreground">← All tools</Link>
@@ -534,6 +535,7 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
           </div>
         </section>
       )}
+      </>)}
 
       {mode === "intro" && (
         <Introduction
