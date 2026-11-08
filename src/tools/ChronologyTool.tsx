@@ -168,29 +168,28 @@ export default function ChronologyTool() {
         return c;
       };
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: paper });
-      const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight(), m = 8, availW = pw - m * 2;
-      const labels = sheet.querySelector<HTMLElement>("[data-report-labels]");
-      const key = sheet.querySelector<HTMLElement>("[data-icon-key]");
-      const panels = [labels, key].filter((el): el is HTMLElement => !!el).map(crop);
-      const panelScale = availW / (1400 * R);
-      const panelH = panels.reduce((n, c) => n + c.height * panelScale + 2, 0);
-      const headH = 21, footH = 7, gap = 3;
-      const availH = ph - m * 2 - headH - footH - panelH;
+      const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight(), m = 6, availW = pw - m * 2;
+      const footer = () => { pdf.setFontSize(7); pdf.text("Confidential. Contains sensitive personal information. Handle in line with your organisation's data protection policy.", m, ph - 2); };
+      const headH = 15.5;
+      const availH = ph - m * 2 - headH;
       const bw = body.scrollWidth * R, bh = body.scrollHeight * R;
       const lw = Number(body.dataset["labelW"] || 0) * R, contentW = bw - lw;
-      const scaleFor = (k: number) => Math.min(availW / (lw + Math.ceil(contentW / k)), (availH - (k - 1) * gap) / (k * bh));
-      let strips = 1;
-      for (let k = 2; k <= 6; k++) if (scaleFor(k) > scaleFor(strips)) strips = k;
-      const scale = scaleFor(strips), per = Math.ceil(contentW / strips);
+      // Fill the full page height first, then split the date range across as few pages as needed to also fit the width.
+      const scale = availH / bh;
       if (scale <= 0) throw new Error("Report too large");
-      pdf.setFontSize(12); pdf.text(`Chronology overview: ${person.label || "-"}`, m, m + 5);
-      pdf.setFontSize(8);
-      pdf.text(`${person.dob ? `DOB: ${formatDate(person.dob, person.dobPrecision)} · ` : ""}Prepared by: ${person.preparedBy || "-"} · Date prepared: ${formatDate(todayISO(), "day")}`, m, m + 10);
+      const perPagePx = Math.floor(availW / scale) - lw;
+      if (perPagePx <= 0) throw new Error("Report too large");
+      const pages = Math.min(6, Math.ceil(contentW / perPagePx));
+      const per = Math.ceil(contentW / pages);
       const visible = sorted.filter((e) => !hidden.has(e.category) && !(hideLow && e.significance === "low")).filter((e) => !focusRange || (Number(e.start.slice(0, 4)) < focusRange[1] && Number((e.end || e.start).slice(0, 4)) + 1 > focusRange[0]));
       const n = reportCounts(visible);
-      pdf.text(`${n.homeMoves} home moves | ${n.educationChanges} education changes | ${n.significantEvents} high-significance events | ${n.unassessed} wellbeing impacts unassessed`, m, m + 15);
-      let y = m + headH;
-      for (let p = 0; p < strips; p++) {
+      for (let p = 0; p < pages; p++) {
+        if (p > 0) pdf.addPage();
+        pdf.setFontSize(12);
+        pdf.text(`Chronology overview: ${person.label || "-"}${pages > 1 ? ` (timeline ${p + 1} of ${pages})` : ""}`, m, m + 4.5);
+        pdf.setFontSize(8);
+        pdf.text(`${person.dob ? `DOB: ${formatDate(person.dob, person.dobPrecision)} · ` : ""}Prepared by: ${person.preparedBy || "-"} · Date prepared: ${formatDate(todayISO(), "day")}`, m, m + 8.5);
+        pdf.text(`${n.homeMoves} home moves | ${n.educationChanges} education changes | ${n.significantEvents} high-significance events | ${n.unassessed} wellbeing impacts unassessed`, m, m + 12.5);
         const w = Math.min(per, contentW - p * per), c = document.createElement("canvas");
         c.width = lw + w; c.height = bh;
         const ctx = c.getContext("2d");
@@ -199,16 +198,26 @@ export default function ChronologyTool() {
         const bx = (br.left - sr.left) * R, by = (br.top - sr.top) * R;
         if (lw) ctx.drawImage(img, bx, by, lw, bh, 0, 0, lw, bh);
         ctx.drawImage(img, bx + lw + p * per, by, w, bh, lw, 0, w, bh);
-        pdf.addImage(c.toDataURL("image/jpeg", 0.88), "JPEG", m, y, c.width * scale, bh * scale, undefined, "FAST");
-        y += bh * scale + gap;
+        pdf.addImage(c.toDataURL("image/jpeg", 0.88), "JPEG", m, m + headH, c.width * scale, bh * scale, undefined, "FAST");
+        footer();
       }
-      y = ph - m - footH - panelH;
-      for (const c of panels) {
-        pdf.addImage(c.toDataURL("image/jpeg", 0.9), "JPEG", m, y, c.width * panelScale, c.height * panelScale, undefined, "FAST");
-        y += c.height * panelScale + 2;
+
+      const labels = sheet.querySelector<HTMLElement>("[data-report-labels]");
+      const key = sheet.querySelector<HTMLElement>("[data-icon-key]");
+      const panels = [labels, key].filter((el): el is HTMLElement => !!el).map(crop);
+      if (panels.length) {
+        pdf.addPage();
+        const panelScale = availW / (1400 * R);
+        pdf.setFontSize(12); pdf.text(`Event list: ${person.label || "-"}`, m, m + 4.5);
+        pdf.setFontSize(8);
+        pdf.text(`${visible.length} event${visible.length === 1 ? "" : "s"} shown · Date prepared: ${formatDate(todayISO(), "day")}`, m, m + 8.5);
+        let y2 = m + headH;
+        for (const c of panels) {
+          pdf.addImage(c.toDataURL("image/jpeg", 0.9), "JPEG", m, y2, c.width * panelScale, c.height * panelScale, undefined, "FAST");
+          y2 += c.height * panelScale + 2;
+        }
       }
-      pdf.setFontSize(7);
-      pdf.text("Confidential. Contains sensitive personal information. Handle in line with your organisation's data protection policy.", m, ph - m);
+      footer();
       pdf.save(`${fileBase()}_overview.pdf`);
     } catch { setToast("Could not create PDF. Try focusing on a shorter period for a very large chronology."); }
     finally { setSimple(false); setBusy(false); }
@@ -378,7 +387,7 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
                 </select>
               </div>
               <MenuItem icon={<ImageIcon size={15} />} disabled={busy} onClick={() => { close(); exportPNG(); }}>Export PNG</MenuItem>
-              <MenuItem icon={<FileText size={15} />} disabled={busy} hint="One-page summary report" onClick={() => { close(); exportSimplePDF(); }}>Export PDF report</MenuItem>
+              <MenuItem icon={<FileText size={15} />} disabled={busy} hint="A large, readable timeline plus a full event list" onClick={() => { close(); exportSimplePDF(); }}>Export PDF report</MenuItem>
               <MenuItem icon={<Globe size={15} />} disabled={busy} hint="Full detail with dates and notes; opens offline in any browser" onClick={() => { close(); setHtmlOpts({ notes: true, ids: true, towns: true }); }}>Export detailed HTML</MenuItem>
               <MenuItem icon={<Printer size={15} />} onClick={() => { close(); print(); }}>Print</MenuItem>
             </>)}
