@@ -296,7 +296,7 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
 
   return (
     <div
-      className="chron min-h-screen"
+      className={`chron min-h-screen ${!showAdd && mode === "timeline" ? "pb-20" : ""}`}
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
       onDragLeave={(e) => { if (e.currentTarget === e.target) setDragging(false); }}
       onDrop={(e) => { e.preventDefault(); setDragging(false); readFile(e.dataTransfer.files[0]); }}
@@ -322,6 +322,16 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
       </header>
 
       <main className="no-print mx-auto max-w-7xl space-y-3 px-4 py-3">
+        {showAdd ? (
+          <section id="add-event-panel" className="panel fade-in space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-base font-bold">Add an event</h2>
+              <button type="button" className="btn h-8 px-2.5" onClick={() => setShowAdd(false)}><X size={14} /> Close</button>
+            </div>
+            <QuickEntry hideHeading onAdd={(ev) => { addQuick(ev); setShowAdd(false); }} onMore={() => { setShowAdd(false); setEditing("new"); }} />
+          </section>
+        ) : (
+          <>
         {personOpen ? (
           <section className="panel fade-in space-y-3">
             <div className="flex items-center justify-between gap-2">
@@ -375,17 +385,9 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
           </Menu>
           {dirty && hasData && <span className="hidden text-xs text-warning sm:inline">Unsaved changes. Export CSV to keep them.</span>}
           <span className="flex-1" />
-          <button type="button" className="btn" aria-expanded={showAdd} aria-controls="add-event-panel" onClick={() => setShowAdd((v) => !v)}>
-            {showAdd ? <X size={15} /> : <Plus size={15} />} {showAdd ? "Hide add event form" : "Add an event"}
-          </button>
           <button type="button" className="btn btn-primary" onClick={() => setMode("guided")}>Back to step by step</button>
           <button className="btn btn-danger" onClick={clearAll} disabled={!hasData}><Trash2 size={15} /> Clear all</button>
         </section>
-        {showAdd && (
-          <div id="add-event-panel">
-            <QuickEntry onAdd={addQuick} onMore={() => setEditing("new")} />
-          </div>
-        )}
 
         <section className="panel space-y-3">
           <div className="flex flex-wrap items-center gap-3">
@@ -448,12 +450,15 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
 
         {!events.length && (
           <div className="panel space-y-3 text-center text-sm text-muted-foreground">
-            <p>No events yet. Use "Add an event" above, or drag a CSV file anywhere onto this page to import it.</p>
+            <p>No events yet. Use "Add an event" below, or drag a CSV file anywhere onto this page to import it.</p>
             <button type="button" className="btn btn-primary" onClick={loadSample}><Sparkles size={15} /> Load a sample timeline</button>
           </div>
         )}
+          </>
+        )}
       </main>
 
+      {!showAdd && (
       <div className="mx-auto max-w-7xl px-4 pb-4">
         <div className="overflow-x-auto rounded-xl border shadow-card">
           <TimelineSheet ref={sheetRef} person={redact?.person ?? person} events={redact ? events.map(redact.clean) : events} hidden={hidden} view={view} hideLow={hideLow} focus={focusRange} simple={simple} onSelect={(e) => setEditing(e)} />
@@ -475,8 +480,9 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
           </div>
         )}
       </div>
+      )}
 
-      {sorted.length > 0 && showEvents && (
+      {!showAdd && sorted.length > 0 && showEvents && (
         <section id="events-panel" className="no-print fade-in mx-auto max-w-7xl px-4 pb-10">
           <h2 className="text-lg font-bold">Events ({sorted.length})</h2>
           <p className="mb-2 text-sm text-muted-foreground">Use Edit or Delete to correct an entry. You can also tap any event on the timeline to edit it.</p>
@@ -582,7 +588,17 @@ var q=document.getElementById('q'),s=document.getElementById('sig'),boxes=[].sli
           <span>© {new Date().getFullYear()} SEMH.co.uk</span>
         </div>
       </footer>
-      {toast && <div role="status" className={`no-print fixed ${mode === "guided" ? "top-20" : "bottom-4"} left-1/2 z-50 -translate-x-1/2 rounded-md bg-foreground px-4 py-2 text-sm text-background`}>{toast}</div>}
+      {toast && <div role="status" className={`no-print fixed ${mode === "guided" ? "top-20" : "bottom-20"} left-1/2 z-50 -translate-x-1/2 rounded-md bg-foreground px-4 py-2 text-sm text-background`}>{toast}</div>}
+
+      {!showAdd && mode === "timeline" && (
+        <div className="no-print fixed inset-x-0 bottom-0 z-40 border-t bg-card shadow-card">
+          <div className="mx-auto flex max-w-7xl justify-center px-4 py-2.5">
+            <button type="button" className="btn btn-primary h-11 w-full max-w-sm justify-center text-base font-semibold" aria-controls="add-event-panel" onClick={() => { setShowAdd(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+              <Plus size={18} /> Add an event
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,12 +10,13 @@ import type { WellbeingImpact } from "@/chronology/lib/wellbeing";
 interface Props {
   onAdd: (e: TimelineEvent) => void;
   onMore: () => void;
+  hideHeading?: boolean;
 }
 
 const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({ value: c.id, label: c.name, accent: `var(--cat-${c.id})` }));
 
-/** Main entry card. Category/type/significance and date stay sticky between rows. */
-export function QuickEntry({ onAdd, onMore }: Props) {
+/** Quick-add form shown inside the focused "Add an event" screen. */
+export function QuickEntry({ onAdd, onMore, hideHeading }: Props) {
   const [date, setDate] = useState("");
   const [approximate, setApproximate] = useState(false);
   const [category, setCategory] = useState("living");
@@ -52,8 +53,8 @@ export function QuickEntry({ onAdd, onMore }: Props) {
     <section className="panel space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <h2 className="text-base font-bold">Add an event</h2>
-          <p className="text-xs text-muted-foreground">Category, type and date stay selected for the next event. Press Enter in the label to add.</p>
+          {!hideHeading && <h2 className="text-base font-bold">Add an event</h2>}
+          <p className="text-xs text-muted-foreground">Press Enter in the label to add.</p>
         </div>
         <button type="button" className="btn" onClick={onMore}><SlidersHorizontal size={14} /> More details</button>
       </div>
