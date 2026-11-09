@@ -4,7 +4,7 @@ import { Card } from '@/components/ui';
 import { Footer } from '@/components/Footer';
 import { premiumUrl } from '@/lib/links';
 
-const FAQS: { q: string; a: ReactNode }[] = [
+const FAQS: { q: string; a: ReactNode; plain?: string }[] = [
   {
     q: 'What is this site?',
     a: 'Five free, standalone SEMH (Social, Emotional and Mental Health) questionnaires — Sensory, Behaviour, Home Behaviour, Pupil Voice and Measure What Matters — plus a Chronology Builder. Each one runs entirely in your browser. The questionnaires end with a CSV download of your results.',
@@ -34,6 +34,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
         chronology you want to keep.
       </>
     ),
+    plain: 'It is temporarily available on this site while we test it. It will become part of the premium SEMH Toolkit at toolkit.semh.co.uk and will then be removed from this free site, so export a CSV of any chronology you want to keep.',
   },
   {
     q: 'What is different about the Chronology Builder?',
@@ -74,12 +75,24 @@ const FAQS: { q: string; a: ReactNode }[] = [
         Email <a className="underline" href="mailto:semhadmin@semh.co.uk">semhadmin@semh.co.uk</a>, including for privacy questions. For the full SEMH Toolkit, visit <a className="underline" href={premiumUrl('faq', 'faq')}>toolkit.semh.co.uk</a>.
       </>
     ),
+    plain: 'Email semhadmin@semh.co.uk, including for privacy questions. For the full SEMH Toolkit, visit toolkit.semh.co.uk.',
   },
 ];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.plain ?? (item.a as string) },
+  })),
+};
 
 export default function Faq() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }} />
       <h1 className="font-display text-3xl font-extrabold sm:text-4xl">Frequently Asked Questions</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
         Questions specific to the SEMH Free Tools site. For how your information is handled, see the{' '}

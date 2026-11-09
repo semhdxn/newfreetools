@@ -137,7 +137,7 @@ export default function Home() {
               Temporarily free while we test it; it will become part of the premium SEMH Toolkit. Not saved anywhere, including this browser, so use Export CSV to keep your work.
             </p>
             <div className="mt-4 flex gap-2">
-              <Link to="/chronology" className="flex-1">
+              <Link to="/chronology" className="flex-1" rel="nofollow">
                 <Button className="w-full" variant="accent" size="lg">
                   <Play className="h-4 w-4 mr-1.5" />
                   Start

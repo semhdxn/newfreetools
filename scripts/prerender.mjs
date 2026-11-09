@@ -37,11 +37,14 @@ function render(route) {
   const head = [
     `<title>${esc(route.title)}</title>`,
     `<meta name="description" content="${esc(route.description)}" />`,
+    route.index === false ? `<meta name="robots" content="noindex, follow" />` : '',
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:title" content="${esc(route.title)}" />`,
     `<meta property="og:description" content="${esc(route.description)}" />`,
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:site_name" content="${esc(seo.siteName)}" />`,
+    `<meta name="twitter:title" content="${esc(route.title)}" />`,
+    `<meta name="twitter:description" content="${esc(route.description)}" />`,
     jsonLd,
   ]
     .filter(Boolean)
@@ -56,14 +59,20 @@ function render(route) {
   return template
     .replace(/<title>[\s\S]*?<\/title>/i, '')
     .replace(/<meta\s+name="description"[^>]*>/i, '')
+    .replace(/<meta\s+name="robots"[^>]*>/i, '')
     .replace(/<meta\s+property="og:title"[^>]*>/i, '')
     .replace(/<meta\s+property="og:description"[^>]*>/i, '')
+    .replace(/<meta\s+name="twitter:title"[^>]*>/i, '')
+    .replace(/<meta\s+name="twitter:description"[^>]*>/i, '')
     .replace('</head>', `    ${head}\n  </head>`)
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 }
 
-const indexed = seo.routes.filter((r) => r.index !== false);
-for (const route of indexed) {
+// Every route gets its own static HTML (even ones kept out of the sitemap, like a
+// temporary tool) so it carries an accurate <meta name="robots">, canonical and
+// title instead of silently falling back to the home page's prerendered markup
+// under the SPA rewrite.
+for (const route of seo.routes) {
   const html = render(route);
   if (route.path === '/') {
     writeFileSync(join(dist, 'index.html'), html);
@@ -74,10 +83,11 @@ for (const route of indexed) {
   }
 }
 
+const indexed = seo.routes.filter((r) => r.index !== false);
 const today = new Date().toISOString().slice(0, 10);
 const sitemap =
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   indexed.map((r) => `  <url><loc>${canonicalFor(r.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n') +
   `\n</urlset>\n`;
 writeFileSync(join(dist, 'sitemap.xml'), sitemap);
-console.log(`prerender: wrote ${indexed.length} pages and sitemap.xml`);
+console.log(`prerender: wrote ${seo.routes.length} pages (${indexed.length} in sitemap.xml)`);

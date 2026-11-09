@@ -32,10 +32,13 @@ export function RouteMeta() {
 
     document.title = route.title;
     setTag('meta[name="description"]', meta('name', 'description'), 'content', route.description);
+    setTag('meta[name="robots"]', meta('name', 'robots'), 'content', route.index === false ? 'noindex, follow' : 'index, follow');
     setTag('link[rel="canonical"]', () => Object.assign(document.createElement('link'), { rel: 'canonical' }), 'href', url);
     setTag('meta[property="og:title"]', meta('property', 'og:title'), 'content', route.title);
     setTag('meta[property="og:description"]', meta('property', 'og:description'), 'content', route.description);
     setTag('meta[property="og:url"]', meta('property', 'og:url'), 'content', url);
+    setTag('meta[name="twitter:title"]', meta('name', 'twitter:title'), 'content', route.title);
+    setTag('meta[name="twitter:description"]', meta('name', 'twitter:description'), 'content', route.description);
   }, [pathname]);
 
   return null;
